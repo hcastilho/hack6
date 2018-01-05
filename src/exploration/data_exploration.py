@@ -1,13 +1,25 @@
 import os
+from datetime import date
 
 import pandas as pd
 import pycountry
 from dateutil import parser
 from fuzzywuzzy import process
 from sklearn import preprocessing
+import matplotlib
+import matplotlib.pyplot as plt
+
+# Output pgf
+# matplotlib.use('pgf')
+from matplotlib.backends.backend_pgf import FigureCanvasPgf
+matplotlib.backend_bases.register_backend('pgf', FigureCanvasPgf)
+
+# Fit A4
+plt.figure(figsize=(11.69, 8.27))
 
 try:
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    BASE_DIR = os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 except:
     BASE_DIR = os.getcwd()
 
@@ -49,17 +61,45 @@ for col in categorical_columns:
 
 # ID
 ################################
+print('\n# Id')
+print('Unique: ', dataset.shape[0] == dataset['id'].unique().size)
 dataset.set_index('id', inplace=True)
 # dataset.drop('id', axis=1)
 
-
 # birth date
 ################################
-dataset['birth date'] = dataset['birth date'].map(
-    lambda x: int(parser.parse(x).timestamp()))
+print('\n# Birth date')
+# dataset['birth date'] = dataset['birth date'].map(
+#     lambda x: parser.parse(x).date())
+dataset['birth date'] = pd.to_datetime(dataset['birth date'])
+
+print('Max: ', dataset['birth date'].max())
+print('Min: ', dataset['birth date'].min())
+# dataset['birth date'].plot.hist()
+# dataset['birth date'].groupby((
+#     dataset['birth date'].dt.year,
+# )).count().plot(kind="bar")
+plt.figure(figsize=(5, 3.9))
+dataset['birth date'].groupby((
+    dataset['birth date'].dt.year,
+)).count().plot()
+# dataset['birth date'].resample('5AS').count().plot(kind="bar")
+# (dataset.set_index('birth date')
+#     .resample('5AS')['target'].count().plot(kind="bar"))
+
+# Show/save plot
+# plt.savefig(os.path.join(BASE_DIR, 'doc/report/img/birth_date_freq.pgf'))
+plt.show()
+
+dataset['birth date'] = dataset['birth date'].map(lambda x: x.timestamp())
 
 # job type
 ################################
+print('\n# Job type')
+print(dataset['job type'].value_counts())
+for row in dataset['job type'].value_counts().items():
+    line = ' & '.join(map(str, row)) + r' \\'
+    print(line)
 
 # school level: ugly
 ################################

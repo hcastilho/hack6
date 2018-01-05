@@ -20,49 +20,50 @@ from sklearn.metrics import roc_auc_score
 
 
 #####################
-# Train/Test Split
+# Split
 #####################
 features = dataset.drop(['target'], axis=1)
 target = dataset['target']
+
 X_train, X_test, y_train, y_test = train_test_split(features,
                                                     target,
                                                     test_size=0.4,
                                                     random_state=0)
-# Choose the model
-model = RandomForestClassifier()
 
-# Fit the model
-model.fit(X_train, y_train)
-
-# Make the predictions
-y_pred = model.predict_proba(X_test)
-
-# Score the predictions
-score = roc_auc_score(y_test, y_pred[:,1])
-
-print("ROC AUC: " + str(score))
+#####################
+# Run once
+#####################
+# # Choose the model
+# model = RandomForestClassifier()
+#
+# # Fit the model
+# model.fit(X_train, y_train)
+#
+# # Make the predictions
+# y_pred = model.predict_proba(X_test)
+#
+# # Score the predictions
+# score = roc_auc_score(y_test, y_pred[:,1])
+#
+# print("ROC AUC: " + str(score))
 
 
 ############################
 # Cross Validation
 ############################
-cv = model_selection.ShuffleSplit(n_splits=5, test_size=0.3, random_state=1)
-
-model = RandomForestClassifier()
-for train, test in cv.split(X_train, y_train):
-    model.fit(X_train.iloc[train], y_train.iloc[train])
-    y_pred = model.predict_proba(X_train.iloc[test])
-    score = roc_auc_score(y_train.iloc[test], y_pred[:, 1])
-    print("ROC AUC: " + str(score))
+# cv = model_selection.ShuffleSplit(n_splits=5, test_size=0.3, random_state=1)
+#
+# model = RandomForestClassifier()
+# for train, test in cv.split(X_train, y_train):
+#     model.fit(X_train.iloc[train], y_train.iloc[train])
+#     y_pred = model.predict_proba(X_train.iloc[test])
+#     score = roc_auc_score(y_train.iloc[test], y_pred[:, 1])
+#     print("ROC AUC: " + str(score))
 
 
 ############################
 # Hyper-parameter Tuning
 ############################
-X_train, X_test, y_train, y_test = train_test_split(features,
-                                                    target,
-                                                    test_size=0.4,
-                                                    random_state=0)
 tests = [
     {
         'name': 'random_forest',
@@ -74,7 +75,9 @@ tests = [
         },
     },
 ]
+
 results = {}
+print('ROC-AUC Scores')
 for test in tests:
     cv = model_selection.ShuffleSplit(n_splits=3,
                                       test_size=0.3,
@@ -95,3 +98,4 @@ for test in tests:
         'roc_auc': roc_auc_score(y_test, probas[:, 1]),
     }
 
+    print(test['name'], results[test['name']]['roc_auc'])
