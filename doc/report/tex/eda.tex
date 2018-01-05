@@ -1,0 +1,61 @@
+\section{Exploratory Data Analysis}
+\label{sec:eda}
+
+The dataset has 8164 samples with the following properties:
+\begin{itemize}
+\item Id
+\item Birth date
+\item Job type
+\item School level
+\item Domestic status
+\item Profession
+\item Domestic relationship type
+\item Ethnicity
+\item Gender
+\item Earned dividends
+\item Interest earned
+\item Monthly work
+\item Country of origin
+\item Target
+\end{itemize}
+Each of the properties was analysed for insights and anomalies which are
+described in the following sections.
+
+\subsubsection*{Id}
+Id for each subject, all values distinct not problems detected in the
+dataset.
+
+\subsubsection*{Birth date}
+Date of birth of the subject, the youngest is from
+\DTMdisplaydate{2016}{2}{10}{-1} and the oldest
+\DTMdisplaydate{1928}{01}{09}{-1}.
+Observing Figure \ref{fig:birth_date_freq} nothing surprinsing is detected.
+
+\begin{figure}[ht]
+    \caption{Date of birth frequency.}
+    \label{fig:birth_date_freq}
+    \centering
+    \input{./img/birth_date_freq.pgf}
+\end{figure}
+
+\subsubsection*{Job type}
+The current job type of the subject, government, self employed, etc\ldots
+Value counts are available in Table \ref{tab:job_type_value_count}.
+
+\begin{table}
+    \caption{Job type value counts.}
+    \label{tab:job_type_value_count}
+    \centering
+    \begin{tabular}{cc}
+        private & 5919 \\
+        unknown & 620 \\
+        local-gov & 618 \\
+        state-gov & 368 \\
+        self-emp-not-inc & 303 \\
+        federal-gov & 236 \\
+        self-emp-inc & 94 \\
+        without-pay & 4 \\
+        never-worked & 2 \\
+    \end{tabular}
+\end{table}
+

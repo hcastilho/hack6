@@ -1,4 +1,5 @@
 .DEFAULT_GOAL := help
+.PHONY: clean clean-test clean-pyc clean-build clean-latex docs help build push all run run-qa
 
 
 define BROWSER_PYSCRIPT
@@ -41,7 +42,7 @@ endif
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-latex
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -55,6 +56,15 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
+
+clean-latex: ## remove latex artifacts
+	find . -name '*.aux' -exec rm -fr {} +
+	find . -name '*.dvi' -exec rm -fr {} +
+	find . -name '*.fdb_latexmk' -exec rm -fr {} +
+	find . -name '*.fls' -exec rm -fr {} +
+	find . -name '*.log' -exec rm -fr {} +
+	find . -name '*.toc' -exec rm -fr {} +
+	find . -name '*.xdv' -exec rm -fr {} +
 
 clean-test: ## remove test and coverage artifacts
 	rm -f .coverage
@@ -81,16 +91,10 @@ coverage: ## check code coverage quickly with the default Python
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
-#docs: ## generate Sphinx HTML documentation, including API docs
-#	rm -f docs/probely.rst
-#	rm -f docs/modules.rst
-#	sphinx-apidoc -o docs/ src
-#	$(MAKE) -C docs clean
-#	$(MAKE) -C docs html
-#	$(BROWSER) docs/_build/html/index.html
+doc/report/report.pdf: $(wildard doc/report/*) $(wildcard doc/report/**/*)
+	cd doc/report; latexmk -xelatex report.tex
 
-#servedocs: docs ## compile the docs watching for changes
-#	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+report: doc/report/report.pdf
 
 release: clean ## package and upload a release
 	python setup.py sdist upload
@@ -112,4 +116,3 @@ push: ## TODO
 
 all: build push
 
-.PHONY: clean clean-test clean-pyc clean-build docs help build push all run run-qa
