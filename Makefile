@@ -91,7 +91,7 @@ coverage: ## check code coverage quickly with the default Python
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
-doc/report/report.pdf: $(wildard doc/report/*) $(wildcard doc/report/**/*)
+doc/report/report.pdf: $(wildcard doc/report/*) $(wildcard doc/report/**/*)
 	cd doc/report; latexmk -xelatex report.tex
 
 report: doc/report/report.pdf

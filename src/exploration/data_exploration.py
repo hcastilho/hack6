@@ -54,87 +54,28 @@ categorical_columns = [
     # 'target',
 ]
 
-for col in categorical_columns:
-    print('\n', col)
-    print(dataset[col].value_counts())
+# for col in categorical_columns:
+#     print('\n', col)
+#     print(dataset[col].value_counts())
 
 
-# ID
-################################
-print('\n# Id')
-print('Unique: ', dataset.shape[0] == dataset['id'].unique().size)
-dataset.set_index('id', inplace=True)
-# dataset.drop('id', axis=1)
+def latex_table(data, pos='', table_spec=''):
+    table = ''
+    for row in data:
+        if not table:
+            if not table_spec:
+                table_spec = 'c' * len(row)
+            table_spec = '{' + table_spec + '}'
+            if not pos:
+                pos=''
+            table = '    \\begin{{tabular}}{pos}{table_spec}\n'.format(
+                pos=pos,
+                table_spec=table_spec,
+            )
+        table += '        ' + ' & '.join(map(str, row)) + ' \\\\\n'
+    table += '    \\end{tabular}\n'
+    return table
 
-# birth date
-################################
-print('\n# Birth date')
-# dataset['birth date'] = dataset['birth date'].map(
-#     lambda x: parser.parse(x).date())
-dataset['birth date'] = pd.to_datetime(dataset['birth date'])
-
-print('Max: ', dataset['birth date'].max())
-print('Min: ', dataset['birth date'].min())
-# dataset['birth date'].plot.hist()
-# dataset['birth date'].groupby((
-#     dataset['birth date'].dt.year,
-# )).count().plot(kind="bar")
-plt.figure(figsize=(5, 3.9))
-dataset['birth date'].groupby((
-    dataset['birth date'].dt.year,
-)).count().plot()
-# dataset['birth date'].resample('5AS').count().plot(kind="bar")
-# (dataset.set_index('birth date')
-#     .resample('5AS')['target'].count().plot(kind="bar"))
-
-# Show/save plot
-# plt.savefig(os.path.join(BASE_DIR, 'doc/report/img/birth_date_freq.pgf'))
-plt.show()
-
-dataset['birth date'] = dataset['birth date'].map(lambda x: x.timestamp())
-
-# job type
-################################
-print('\n# Job type')
-print(dataset['job type'].value_counts())
-for row in dataset['job type'].value_counts().items():
-    line = ' & '.join(map(str, row)) + r' \\'
-    print(line)
-
-# school level: ugly
-################################
-
-# domestic status: d to divorce, several types of married
-################################
-
-# profession
-################################
-
-# domestic relationship type: ugly
-################################
-
-# ethnicity: ugly
-################################
-
-# gender: all female dataset
-################################
-
-# earned dividends
-################################
-
-# interest earned
-################################
-
-# monthly work
-################################
-
-# country of origin
-################################
-country_names = [obj.name for obj in pycountry.countries.objects]
-# WTF are these dr?? democratic rep of smth?
-# for i, r in dataset.iterrows():
-#     if r['country of origin'] == 'dr':
-#         print(r)
 
 def country_to_internal(txt):
     txt = txt.lower()
@@ -166,14 +107,130 @@ def country_to_internal(txt):
 
     return ctry.alpha_2
 
+# ID
+################################
+print('\n# Id')
+print('Unique: ', dataset.shape[0] == dataset['id'].unique().size)
+dataset.set_index('id', inplace=True)
+# dataset = dataset.drop('id', axis=1)
+
+# country of origin
+################################
+country_names = [obj.name for obj in pycountry.countries.objects]
+# WTF are these dr?? democratic rep of smth?
+# for i, r in dataset.iterrows():
+#     if r['country of origin'] == 'dr':
+#         print(r)
+dataset['country of origin'].value_counts()
+print(latex_table(dataset['country of origin'].value_counts().items()))
+
 dataset['country of origin'] = dataset['country of origin'].map(
     country_to_internal)
 
+# birth date
+################################
+print('\n# Birth date')
+# dataset['birth date'] = dataset['birth date'].map(
+#     lambda x: parser.parse(x).date())
+dataset['birth date'] = pd.to_datetime(dataset['birth date'])
+
+print('Max: ', dataset['birth date'].max())
+print('Min: ', dataset['birth date'].min())
+# dataset['birth date'].plot.hist()
+# dataset['birth date'].groupby((
+#     dataset['birth date'].dt.year,
+# )).count().plot(kind="bar")
+plt.figure(figsize=(5, 3.9))
+dataset['birth date'].groupby((
+    dataset['birth date'].dt.year,
+)).count().plot()
+# dataset['birth date'].resample('5AS').count().plot(kind="bar")
+# (dataset.set_index('birth date')
+#     .resample('5AS')['target'].count().plot(kind="bar"))
+
+# Show/save plot
+# plt.savefig(os.path.join(BASE_DIR, 'doc/report/img/birth_date_freq.pgf'))
+plt.show()
+
+dataset['birth date'] = dataset['birth date'].map(lambda x: x.timestamp())
+
+# domestic relationship type: ugly
+################################
+print('\n# Domestic relationship type')
+print(latex_table(dataset['domestic relationship type'].value_counts().items()))
+
+dataset.groupby(('domestic status', 'domestic relationship type')).size()
+
+# domestic status: d to divorce, several types of married
+################################
+print('\n# Domestic status')
+print(latex_table(dataset['domestic status'].value_counts().items()))
+
+# earned dividends
+################################
+print('\n# Earned dividends')
+print(latex_table(dataset['earned dividends'].value_counts().items()))
+dataset = dataset.drop('earned dividends', axis=1)
+
+# ethnicity: ugly
+################################
+print('\n# Ethnicity')
+print(latex_table(dataset['ethnicity'].value_counts().items()))
+
+# gender: all female dataset
+################################
+print('\n# Gender')
+print(latex_table(dataset['gender'].value_counts().items()))
+
+# job type
+################################
+print('\n# Job type')
+print(latex_table(dataset['job type'].value_counts().items()))
+
+# interest earned
+################################
+print('\n# Interest earned')
+
+plt.figure(figsize=(5, 3.9))
+dataset['interest earned'].plot(kind='hist', logy=True)
+
+# Show/save plot
+plt.figure(figsize=(5, 3.9))
+ax=dataset['interest earned'].plot(kind='hist', logy=True)
+# ax.set_yscale(nonposy='mask')
+# ax.set_xscale("log", nonposx='clip')
+# plt.savefig(
+#     os.path.join(BASE_DIR, 'doc/report/img/interest_earned_freq.pgf'))
+# plt.savefig(
+#     os.path.join(BASE_DIR, 'doc/report/img/interest_earned_freq.png'))
+plt.show()
+
+# monthly work
+################################
+print('\n# Monthly work')
+
+plt.figure(figsize=(5, 3.9))
+dataset['monthly work'].plot(kind='hist')
+
+# Show/save plot
+# plt.savefig(os.path.join(BASE_DIR, 'doc/report/img/monthly_work_freq.pgf'))
+plt.show()
+
+# profession
+################################
+print('\n# Profession')
+print(latex_table(dataset['profession'].value_counts().items()))
+
+# school level: ugly
+################################
+print('\n# School level')
+print(latex_table(dataset['school level'].value_counts().items()))
 
 # normalize data
 ################################
 # for col in numerical_columns:
-#     dataset[col] = preprocessing.normalize(dataset[col].values.reshape(-1, 1))
+# dataset[col] = preprocessing.normalize(
+#     dataset[col].values.reshape(-1, 1))
 
 # categorical data to dummy
 ################################

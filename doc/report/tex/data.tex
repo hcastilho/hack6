@@ -1,4 +1,56 @@
-\section{Data cleaning, feature engineering and train/test splitting}
+\section{Data pre-processing}
 \label{sec:data}
 
-\Blindtext
+This section details any and all data pre-processing before modelling.
+The first section \vref{subsec:cleaning} explains what was done to
+convert the dataset to usable, unambiguous types.
+Afterwards section \vref{subsec:feature} details the what was
+done to select and improve the features feed to the model.
+Finally section \vref{subsec:splitting} breaks down the train/test split.
+
+
+\subsection{Data cleaning}
+\label{subsec:cleaning}
+
+% birth date
+converted to timestamps
+
+
+% country of origin
+On importing the dataset all countries where converted
+to the corresponding \emph{ISO 3166--1 alpha-2} representation.
+Some inputs required special rules.
+Especially ambiguous was \emph{dr} which
+represents no country code this was converted to Dominican Republic (DO)
+even if the race for these inputs suggests it's not (mostly white).
+
+% categorical data
+For categorical data, the classes where kept as is and turned into dummy class
+variables.
+
+
+
+\subsection{Feature engineering}
+\label{subsec:feature}
+
+% Earned dividends
+This feature was always 0 for the dataset.
+Since it conveys no useful information it was dropped.
+If new samples include this value this decision will be reconsidered.
+
+% Gender
+All female, dropped.
+
+% http://scikit-learn.org/stable/modules/feature_selection.html
+% low variace
+% Univariate feature selection
+% Recursive feature elimination
+% Feature selection using SelectFromModel
+% Feature selection as part of a pipeline
+
+
+\subsection{Train/test splitting}
+\label{subsec:splitting}
+
+The train/test split was done holding out 40\% of the data for the test set.
+Furthermore training was done using a suffle split with 30\% for validation.
