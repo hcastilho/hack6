@@ -9,13 +9,13 @@ from sklearn import preprocessing
 import matplotlib
 import matplotlib.pyplot as plt
 
+OUTPUT = False
+STORE = False
+
 # Output pgf
 # matplotlib.use('pgf')
 from matplotlib.backends.backend_pgf import FigureCanvasPgf
 matplotlib.backend_bases.register_backend('pgf', FigureCanvasPgf)
-
-# Fit A4
-plt.figure(figsize=(11.69, 8.27))
 
 try:
     BASE_DIR = os.path.dirname(
@@ -109,8 +109,9 @@ def country_to_internal(txt):
 
 # ID
 ################################
-print('\n# Id')
-print('Unique: ', dataset.shape[0] == dataset['id'].unique().size)
+if OUTPUT:
+    print('\n# Id')
+    print('Unique: ', dataset.shape[0] == dataset['id'].unique().size)
 dataset.set_index('id', inplace=True)
 # dataset = dataset.drop('id', axis=1)
 
@@ -122,20 +123,19 @@ country_names = [obj.name for obj in pycountry.countries.objects]
 #     if r['country of origin'] == 'dr':
 #         print(r)
 dataset['country of origin'].value_counts()
-print(latex_table(dataset['country of origin'].value_counts().items()))
+if OUTPUT:
+    print('\n# Country')
+    print(latex_table(dataset['country of origin'].value_counts().items()))
 
 dataset['country of origin'] = dataset['country of origin'].map(
     country_to_internal)
 
 # birth date
 ################################
-print('\n# Birth date')
 # dataset['birth date'] = dataset['birth date'].map(
 #     lambda x: parser.parse(x).date())
 dataset['birth date'] = pd.to_datetime(dataset['birth date'])
 
-print('Max: ', dataset['birth date'].max())
-print('Min: ', dataset['birth date'].min())
 # dataset['birth date'].plot.hist()
 # dataset['birth date'].groupby((
 #     dataset['birth date'].dt.year,
@@ -149,47 +149,67 @@ dataset['birth date'].groupby((
 #     .resample('5AS')['target'].count().plot(kind="bar"))
 
 # Show/save plot
-# plt.savefig(os.path.join(BASE_DIR, 'doc/report/img/birth_date_freq.pgf'))
-plt.show()
+if OUTPUT:
+    print('\n# Birth date')
+    print('Max: ', dataset['birth date'].max())
+    print('Min: ', dataset['birth date'].min())
+
+    if STORE:
+        plt.savefig(os.path.join(BASE_DIR,
+                                 'doc/report/img/birth_date_freq.pgf'))
+    else:
+        plt.show()
 
 dataset['birth date'] = dataset['birth date'].map(lambda x: x.timestamp())
 
 # domestic relationship type: ugly
 ################################
-print('\n# Domestic relationship type')
-print(latex_table(dataset['domestic relationship type'].value_counts().items()))
+if OUTPUT:
+    print('\n# Domestic relationship type')
+    print(latex_table(
+        dataset['domestic relationship type'].value_counts().items()))
 
-dataset.groupby(('domestic status', 'domestic relationship type')).size()
+    print(dataset.groupby(
+        ('domestic status', 'domestic relationship type')).size())
 
 # domestic status: d to divorce, several types of married
 ################################
-print('\n# Domestic status')
-print(latex_table(dataset['domestic status'].value_counts().items()))
+if OUTPUT:
+    print('\n# Domestic status')
+    print(latex_table(dataset['domestic status'].value_counts().items()))
 
 # earned dividends
 ################################
-print('\n# Earned dividends')
-print(latex_table(dataset['earned dividends'].value_counts().items()))
+if OUTPUT:
+    print('\n# Earned dividends')
+    print(latex_table(dataset['earned dividends'].value_counts().items()))
 dataset = dataset.drop('earned dividends', axis=1)
+numerical_columns.remove('earned dividends')
 
 # ethnicity: ugly
 ################################
-print('\n# Ethnicity')
-print(latex_table(dataset['ethnicity'].value_counts().items()))
+if OUTPUT:
+    print('\n# Ethnicity')
+    print(latex_table(dataset['ethnicity'].value_counts().items()))
 
 # gender: all female dataset
 ################################
-print('\n# Gender')
-print(latex_table(dataset['gender'].value_counts().items()))
+if OUTPUT:
+    print('\n# Gender')
+    print(latex_table(dataset['gender'].value_counts().items()))
+dataset = dataset.drop('gender', axis=1)
+categorical_columns.remove('gender')
 
 # job type
 ################################
-print('\n# Job type')
-print(latex_table(dataset['job type'].value_counts().items()))
+if OUTPUT:
+    print('\n# Job type')
+    print(latex_table(dataset['job type'].value_counts().items()))
 
 # interest earned
 ################################
-print('\n# Interest earned')
+if OUTPUT:
+    print('\n# Interest earned')
 
 plt.figure(figsize=(5, 3.9))
 dataset['interest earned'].plot(kind='hist', logy=True)
@@ -199,32 +219,45 @@ plt.figure(figsize=(5, 3.9))
 ax=dataset['interest earned'].plot(kind='hist', logy=True)
 # ax.set_yscale(nonposy='mask')
 # ax.set_xscale("log", nonposx='clip')
-# plt.savefig(
-#     os.path.join(BASE_DIR, 'doc/report/img/interest_earned_freq.pgf'))
-# plt.savefig(
-#     os.path.join(BASE_DIR, 'doc/report/img/interest_earned_freq.png'))
-plt.show()
+
+if OUTPUT:
+    if STORE:
+        plt.savefig(
+            os.path.join(BASE_DIR,
+                         'doc/report/img/interest_earned_freq.pgf'))
+        plt.savefig(
+            os.path.join(BASE_DIR,
+                         'doc/report/img/interest_earned_freq.png'))
+    else:
+        plt.show()
 
 # monthly work
 ################################
-print('\n# Monthly work')
+if OUTPUT:
+    print('\n# Monthly work')
 
 plt.figure(figsize=(5, 3.9))
 dataset['monthly work'].plot(kind='hist')
 
 # Show/save plot
-# plt.savefig(os.path.join(BASE_DIR, 'doc/report/img/monthly_work_freq.pgf'))
-plt.show()
+if OUTPUT:
+    if STORE:
+        plt.savefig(os.path.join(BASE_DIR,
+                                 'doc/report/img/monthly_work_freq.pgf'))
+    else:
+        plt.show()
 
 # profession
 ################################
-print('\n# Profession')
-print(latex_table(dataset['profession'].value_counts().items()))
+if OUTPUT:
+    print('\n# Profession')
+    print(latex_table(dataset['profession'].value_counts().items()))
 
 # school level: ugly
 ################################
-print('\n# School level')
-print(latex_table(dataset['school level'].value_counts().items()))
+if OUTPUT:
+    print('\n# School level')
+    print(latex_table(dataset['school level'].value_counts().items()))
 
 # normalize data
 ################################

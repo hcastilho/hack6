@@ -13,7 +13,7 @@ Finally section \vref{subsec:splitting} breaks down the train/test split.
 \label{subsec:cleaning}
 
 % birth date
-converted to timestamps
+To input in the models birth dates where converted to timestamps.
 
 
 % country of origin
@@ -34,23 +34,16 @@ variables.
 \label{subsec:feature}
 
 % Earned dividends
-This feature was always 0 for the dataset.
-Since it conveys no useful information it was dropped.
+In the dataset earned dividends and gender do not change,
+these properties where dropped since they convey no useful information.
 If new samples include this value this decision will be reconsidered.
-
-% Gender
-All female, dropped.
-
-% http://scikit-learn.org/stable/modules/feature_selection.html
-% low variace
-% Univariate feature selection
-% Recursive feature elimination
-% Feature selection using SelectFromModel
-% Feature selection as part of a pipeline
 
 
 \subsection{Train/test splitting}
 \label{subsec:splitting}
 
-The train/test split was done holding out 40\% of the data for the test set.
-Furthermore training was done using a suffle split with 30\% for validation.
+The train/test split was done holding out .4 of the data for final
+validation (train{\_}test{\_}split).
+Furthermore training was done using a shuffle split (\emph{ShuffleSplitCV})
+with .3 for testing.
+
