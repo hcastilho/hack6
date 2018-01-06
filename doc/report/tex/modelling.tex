@@ -1,16 +1,16 @@
 \section{Modelling}
 \label{sec:modelling}
 
+\section{Initial tests}
+\label{sec:initialTests}
 To get a feelling of the baseline performance of the models available in
 the \emph{scikit} package severall where tried with the default parameters.
 The train/test split is described in \vref{subsec:splitting}.
-The results are in \vref{tab:initial_model_scores}, a the
-exact parameters passet to the models is present in
-\vref{tab:initial_model_params}
+The results are in \vref{tab:initialModelScores}.
 
 \begin{table}[!h]
     \caption{}
-    \label{tab:initial_model_scores}
+    \label{tab:initialModelScores}
     \centering
     \begin{tabular}{cc}
         Model & AUC ROC Score \\
@@ -30,3 +30,17 @@ exact parameters passet to the models is present in
         VotingClassifier & 0.8233 \\
     \end{tabular}
 \end{table}
+
+With the default parameters there is, as expected, a clear dominance of
+ensemble models.
+The top 5 where selected for further parameter tuning.
+
+\section{Model tuning}
+\label{sec:modelTuning}
+
+\blindtext
+
+\section{Model selection}
+\label{sec:modelSelection}
+
+\blindtext
