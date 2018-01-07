@@ -1,7 +1,8 @@
 \section{EDA Tables}
 
 \begin{table}[!h]
-    \caption{Country of origin value counts.}
+\begin{minipage}{.3\textwidth}
+    \caption{Country of origin value counts (trimmed).}
     \label{tab:contry_of_origin_value_counts}
     \centering
     \begin{tabular}{cc}
@@ -29,57 +30,29 @@
         peru & 11 \\
         taiwan & 11 \\
         thailand & 11 \\
-        fr & 9 \\
-        trinadad/tobago & 8 \\
-        india & 7 \\
-        nicaragua & 7 \\
-        portugal & 6 \\
-        honduras & 6 \\
-        laos & 6 \\
-        ecuador & 6 \\
-        iran & 6 \\
-        ireland & 5 \\
-        us territory & 4 \\
-        hong & 4 \\
-        scotland & 3 \\
-        hungary & 3 \\
-        greece & 3 \\
-        yugoslavia & 3 \\
-        cambodia & 2 \\
-        netherlands & 1 \\
+%        fr & 9 \\
+%        trinadad/tobago & 8 \\
+%        india & 7 \\
+%        nicaragua & 7 \\
+%        portugal & 6 \\
+%        honduras & 6 \\
+%        laos & 6 \\
+%        ecuador & 6 \\
+%        iran & 6 \\
+%        ireland & 5 \\
+%        us territory & 4 \\
+%        hong & 4 \\
+%        scotland & 3 \\
+%        hungary & 3 \\
+%        greece & 3 \\
+%        yugoslavia & 3 \\
+%        cambodia & 2 \\
+%        netherlands & 1 \\
     \end{tabular}
-\end{table}
-
-\begin{table}[!h]
-    \caption{Domestic relationship type value counts.}
-    \label{tab:domestic_relationship_type_value_counts}
-    \centering
-    \begin{tabular}{cc}
-        not living with family & 2919 \\
-        never married & 2063 \\
-        living with child & 1750 \\
-        has husband & 1106 \\
-        living with extende family & 325 \\
-        has wife & 1 \\
-    \end{tabular}
-\end{table}
-
-\begin{table}[!h]
-    \caption{Domestic status value counts.}
-    \label{tab:domestic_status_value_counts}
-    \begin{tabular}{cc}
-        single & 3662 \\
-        d & 2073 \\
-        married 2 & 1170 \\
-        spouse passed & 599 \\
-        divorce pending & 486 \\
-        married not together & 163 \\
-        married 1 & 11 \\
-    \end{tabular}
-    \centering
-\end{table}
-
-\begin{table}[!h]
+\end{minipage}
+%\end{table}
+%\begin{table}[!h]
+\begin{minipage}{.7\textwidth}
     \caption{Domestic relationship type grouped by domestic status counts.}
     \label{tab:domestic_type_by_status_counts}
     \centering
@@ -114,9 +87,44 @@
         & never married              &    242 \\
         & not living with family     &    317 \\
     \end{tabular}
+\end{minipage}
 \end{table}
 
 \begin{table}[!h]
+    \begin{minipage}{.5\textwidth}
+    \caption{Domestic relationship type value counts.}
+    \label{tab:domestic_relationship_type_value_counts}
+    \centering
+    \begin{tabular}{cc}
+        not living with family & 2919 \\
+        never married & 2063 \\
+        living with child & 1750 \\
+        has husband & 1106 \\
+        living with extende family & 325 \\
+        has wife & 1 \\
+    \end{tabular}
+    \end{minipage}
+%\end{table}
+%\begin{table}[!h]
+    \begin{minipage}{.5\textwidth}
+    \centering
+    \caption{Domestic status value counts.}
+    \label{tab:domestic_status_value_counts}
+    \begin{tabular}{cc}
+        single & 3662 \\
+        d & 2073 \\
+        married 2 & 1170 \\
+        spouse passed & 599 \\
+        divorce pending & 486 \\
+        married not together & 163 \\
+        married 1 & 11 \\
+    \end{tabular}
+    \end{minipage}
+\end{table}
+
+
+\begin{table}[!h]
+\begin{minipage}{.5\textwidth}
     \caption{Ethnicity value counts.}
     \label{tab:ethnicity_value_counts}
     \centering
@@ -127,18 +135,19 @@
         american indian & 88 \\
         other & 81 \\
     \end{tabular}
-\end{table}
-
-\begin{table}[!h]
+%\end{table}
+\vspace{5mm}
+%\begin{table}[!h]
     \caption{Gender value counts.}
     \label{tab:gender_value_counts}
     \centering
     \begin{tabular}{cc}
         Female & 8164 \\
     \end{tabular}
-\end{table}
-
-\begin{table}[!h]
+\end{minipage}
+%\end{table}
+%\begin{table}[!h]
+\begin{minipage}{.5\textwidth}
     \caption{Job type value counts.}
     \label{tab:job_type_value_counts}
     \centering
@@ -153,9 +162,11 @@
         without-pay & 4 \\
         never-worked & 2 \\
     \end{tabular}
+\end{minipage}
 \end{table}
 
 \begin{table}[!h]
+\begin{minipage}{.5\textwidth}
     \caption{Profession value counts.}
     \label{tab:profession_value_counts}
     \begin{tabular}{cc}
@@ -175,9 +186,10 @@
         agriculture & 48 \\
     \end{tabular}
     \centering
-\end{table}
-
-\begin{table}[!h]
+\end{minipage}
+%\end{table}
+%\begin{table}[!h]
+\begin{minipage}{.5\textwidth}
     \caption{School level value counts.}
     \label{tab:school_level_value_counts}
     \centering
@@ -199,5 +211,6 @@
         primary 1 through 4 & 37 \\
         kindergarten & 13 \\
     \end{tabular}
+\end{minipage}
 \end{table}
 
