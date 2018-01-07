@@ -13,21 +13,10 @@ from sklearn import neighbors
 from sklearn import svm
 from sklearn import tree
 
-from exploration.data_exploration import dataset
+from exploration.data_exploration import X_train, y_train, X_test, y_test
 from exploration import modelling
+from exploration.modelling import cv
 
-#####################
-# Split
-#####################
-features = dataset.drop(['target'], axis=1)
-target = dataset['target']
-
-X_train, X_test, y_train, y_test = model_selection.train_test_split(
-    features,
-    target,
-    test_size=0.4,
-    random_state=0
-)
 
 #####################
 # Run once
@@ -37,13 +26,6 @@ X_train, X_test, y_train, y_test = model_selection.train_test_split(
 #     model, X_train, y_train, X_test, y_test)
 # print("ROC AUC: " + str(score))
 
-
-############################
-# Cross Validation Split
-############################
-cv = model_selection.ShuffleSplit(n_splits=5,
-                                  test_size=0.3,
-                                  random_state=1)
 
 ############################
 # Cross Validation
@@ -56,7 +38,7 @@ cv = model_selection.ShuffleSplit(n_splits=5,
 # Hyper Tuning
 ############################
 
-results = []
+results = {}
 
 
 def format_result(result):
@@ -68,7 +50,7 @@ def format_result(result):
 
 def full_table(results):
     txt = ''
-    for res in results:
+    for res in results.values():
         txt += ('\subsubsection*{{{}}}\n'
                 '\\begin{{lstlisting}}\n{}\n\\end{{lstlisting}} \n\n'
                 .format(res['model'].__name__,
@@ -79,7 +61,7 @@ def full_table(results):
 
 def small_table(results):
     txt = ''
-    for res in results:
+    for res in results.values():
         txt += '{} & {:.4f} \\\\\n'.format(res['model'].__name__, res['score'])
     return txt
 
@@ -115,7 +97,7 @@ model = {
 # Collinear variables (the categories) cause problems since they
 # are not completely independent
 result = modelling.run_hyper(model, X_train, y_train, X_test, y_test, cv)
-results.append(result)
+results[result['name']] = result
 print(format_result(result))
 
 ######################################
@@ -287,7 +269,7 @@ print(format_result(result))
 # 1.11.1. Bagging meta-estimator
 ######################################
 model = {
-    'name': 'bagging_kneighbor',
+    'name': 'bagging',
     'model': ensemble.BaggingClassifier,
     'params': {
         # 'base_estimator': None,  # Decision tree

@@ -4,9 +4,8 @@
 \section{Initial tests}
 \label{sec:initialTests}
 To get a feelling of the baseline performance of the models available in
-the \emph{scikit} package severall where tried with the default parameters.
-The train/test split is described in \vref{subsec:splitting}.
-The results are in \vref{tab:initialModelScores}.
+the \emph{scikit} package severall where tried with the default parameters
+(except where not possible), results in \vref{tab:initialModelScores}.
 
 \begin{table}[!h]
     \caption{}
@@ -15,21 +14,22 @@ The results are in \vref{tab:initialModelScores}.
     \begin{tabular}{cc}
         Model & AUC ROC Score \\
         \hline
-        QuadraticDiscriminantAnalysis & 0.8053 \\
-        SVC & 0.6698 \\
-        SGDClassifier & 0.6377 \\
-        KNeighborsClassifier & 0.7267 \\
-        GaussianProcessClassifier & 0.7022 \\
-        GaussianNB & 0.6718 \\
-        DecisionTreeClassifier & 0.6729 \\
+        GradientBoostingClassifier & 0.9212 \\
+        AdaBoostClassifier & 0.9008 \\
         BaggingClassifier & 0.8428 \\
+        VotingClassifier & 0.8233 \\
         RandomForestClassifier & 0.8160 \\
         ExtraTreesClassifier & 0.8154 \\
-        AdaBoostClassifier & 0.9008 \\
-        GradientBoostingClassifier & 0.9212 \\
-        VotingClassifier & 0.8233 \\
+        QuadraticDiscriminantAnalysis & 0.8053 \\
+        KNeighborsClassifier & 0.7267 \\
+        GaussianProcessClassifier & 0.7022 \\
+        DecisionTreeClassifier & 0.6729 \\
+        SVC & 0.6698 \\
+        SGDClassifier & 0.6377 \\
+        GaussianNB & 0.6718 \\
     \end{tabular}
 \end{table}
+
 
 With the default parameters there is, as expected, a clear dominance of
 ensemble models.

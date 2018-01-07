@@ -8,6 +8,14 @@ from sklearn import model_selection
 n_jobs = multiprocessing.cpu_count() - 1
 
 
+############################
+# Cross Validation Split
+############################
+cv = model_selection.ShuffleSplit(n_splits=5,
+                                  test_size=0.3,
+                                  random_state=1)
+
+
 def run_once(model, xtrain, ytrain, xtest, ytest):
     """Fit a model return results"""
     model.fit(xtrain, ytrain)
@@ -92,6 +100,7 @@ def run_hyper(hyper, xtrain, ytrain, xtest, ytest, cv):
     res = {
         **hyper,
         'rs': rs,
+        'estimator': rs.best_estimator_,
         'probas': probas,
         'y_pred': pred,
         'roc_auc': metrics.roc_auc_score(ytest, probas[:, -1]),

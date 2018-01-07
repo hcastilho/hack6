@@ -5,6 +5,7 @@ import pandas as pd
 import pycountry
 from dateutil import parser
 from fuzzywuzzy import process
+from sklearn import model_selection
 from sklearn import preprocessing
 import matplotlib
 import matplotlib.pyplot as plt
@@ -268,3 +269,16 @@ if OUTPUT:
 # categorical data to dummy
 ################################
 dataset = pd.get_dummies(dataset, columns=categorical_columns)
+
+#####################
+# Split
+#####################
+features = dataset.drop(['target'], axis=1)
+target = dataset['target']
+
+X_train, X_test, y_train, y_test = model_selection.train_test_split(
+    features,
+    target,
+    test_size=0.4,
+    random_state=0
+)
