@@ -1,4 +1,5 @@
 import os
+from operator import itemgetter
 
 import numpy as np
 from sklearn import discriminant_analysis
@@ -22,17 +23,11 @@ except:
 MODEL_DIR = os.path.join(BASE_DIR, 'data/models')
 
 
-def format_result(result, xtest, ytest):
+def format_result(result):
     res = ('\n{result[name]}'
            '\nbest_params_: {result[rs].best_params_}'
-           '\nscore: {score}').format(
+           '\nscore: {result[score]}').format(
         result=result,
-        params=(
-            result['rs'].best_params_
-                if hasattr(result['rs'], 'best_params_')
-                else result['estimator'].get_params()
-        ),
-        score=result['estimator'].score(xtest, ytest)
     )
     return res
 
@@ -42,42 +37,37 @@ def load_models():
     for fname in os.listdir(MODEL_DIR):
         model_name = fname.split('.')[0]
         fpath = os.path.join(MODEL_DIR, fname)
-        model = joblib.load(fpath)
-        results[model_name] = {'estimator': model}
+        results[model_name] = joblib.load(fpath)
     return results
 
 
 def save_models(results):
     for name, res in results.items():
         print('%s.pkl' % os.path.join(MODEL_DIR, name))
-        if 'estimator' in res:
-            joblib.dump(res['estimator'],
-                        '%s.pkl' % os.path.join(MODEL_DIR, name))
-        else:
-            joblib.dump(res['rs'].best_estimator_,
-                        '%s.pkl' % os.path.join(MODEL_DIR, name))
+        joblib.dump(res, '%s.pkl' % os.path.join(MODEL_DIR, name))
 
 
-def get_best(results, xtest, ytest):
-    best = None
-    for r in results.values():
-        model = r['estimator']
-        if best is None:
-            best = model
-        elif (model.score(xtest, ytest)
-              > best.score(xtest, ytest)):
-            best = model
-    return best
-
-
-def replace_if_better(res, results, xtest, ytest):
+def replace_if_better(res, results):
     if res['name'] not in results:
         results[res['name']] = res
+        return True
 
-    elif (res['estimator'].score(xtest, ytest)
-          > results[res['name']]['estimator'].score(xtest, ytest)):
+    elif res['score'] > results[res['name']]['score']:
+        print('!! IMPROVEMENT !!')
         results[res['name']] = res
+        return True
 
+    return False
+
+
+def format_table(results):
+    results = sorted(results.values(), key=itemgetter('score'), reverse=True)
+    txt = ''
+    for res in results:
+        txt += '{} & {:.4f} \\\\\n'.format(
+            res['model'].__name__,
+            res['score'])
+    return txt
 
 # results = {}
 results = load_models()
@@ -90,14 +80,14 @@ model = {
     'model': ensemble.GradientBoostingClassifier,
     'params': {
         'loss': ['deviance', 'exponential'],
-        # 'learning_rate': np.arange(0.05, 0.2, 0.05),
+        'learning_rate': np.arange(0.05, 0.2, 0.05),
         'n_estimators': range(1, 400),
         # 'subsample': 1.0,
         # 'criterion': 'friedman_mse',
-        'min_samples_split': range(1, 400),
+        # 'min_samples_split': range(1, 400),
         # 'min_samples_leaf': 1,
         # 'min_weight_fraction_leaf': 0.0,
-        # 'max_depth': range(1, 20),
+        'max_depth': range(1, 20),
         # 'min_impurity_decrease': 0.0,
         # 'min_impurity_split': None,
         # 'init': None,
@@ -110,8 +100,8 @@ model = {
     },
 }
 result = modelling.run_hyper(model, X_train, y_train, X_test, y_test, cv)
-replace_if_better(result, results, X_test, y_test)
-print(format_result(result, X_test, y_test))
+replace_if_better(result, results)
+print(format_result(result))
 
 ##############################
 # AdaBoostClassifier
@@ -137,8 +127,8 @@ model = {
     },
 }
 result = modelling.run_hyper(model, X_train, y_train, X_test, y_test, cv)
-replace_if_better(result, results, X_test, y_test)
-print(format_result(result, X_test, y_test))
+replace_if_better(result, results)
+print(format_result(result))
 
 ##############################
 # BaggingClassifier
@@ -170,8 +160,8 @@ model = {
     },
 }
 result = modelling.run_hyper(model, X_train, y_train, X_test, y_test, cv)
-replace_if_better(result, results, X_test, y_test)
-print(format_result(result, X_test, y_test))
+replace_if_better(result, results)
+print(format_result(result))
 
 ##############################
 # VotingClassifier
@@ -198,8 +188,8 @@ model = {
     },
 }
 result = modelling.run_hyper(model, X_train, y_train, X_test, y_test, cv)
-replace_if_better(result, results, X_test, y_test)
-print(format_result(result, X_test, y_test))
+replace_if_better(result, results)
+print(format_result(result))
 
 ##############################
 # RandomForestClassifier
@@ -228,9 +218,14 @@ model = {
     },
 }
 result = modelling.run_hyper(model, X_train, y_train, X_test, y_test, cv)
-replace_if_better(result, results, X_test, y_test)
-print(format_result(result, X_test, y_test))
+replace_if_better(result, results)
+print(format_result(result))
 
 save_models(results)
-best = get_best(results, X_test, y_test)
+
+best = sorted(results.values(), key=itemgetter('score'), reverse=True)[0]
+print(format_result(best))
+
+print('\n\n')
+print(format_table(results))
 
