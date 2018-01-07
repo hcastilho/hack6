@@ -258,8 +258,8 @@ model = {
     },
 }
 result = modelling.run_hyper(model, X_train, y_train, X_test, y_test, cv)
-results.append(result)
 print(format_result(result))
+results.append(result)
 
 ######################################
 # 1.11. Ensemble methods

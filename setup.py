@@ -15,6 +15,7 @@ requirements = [
     'django',
     'djangorestframework',
     'fuzzywuzzy',
+    'graphviz',
     'jupyter',
     'matplotlib',
     'numpy',

@@ -95,3 +95,18 @@ not evident.
 Finally there are severall connections between specific \emph{countries of
 origin} and \emph{school level} and \emph{ethnicity}.
 
+To help understand the dataset we trained a small decision tree see
+\vref{fig:decision-tree}.
+Although the decision tree model does not give good results (see
+\vref{sec:initialTests}) it is still interesting to observe what features
+split the data.
+In fact, this model with a \verb+max_depth+ of 4 we outperformed the same
+model using the standard parameters obtaining a \(0.8927\) AUC ROC score.
+But this is the maximum obtained using simple decision trees.
+
+\begin{figure}[!h]
+    \caption{Date of birth frequency.}
+    \label{fig:decision-tree}
+    \centering
+    \includegraphics[width=\textwidth]{./img/decision-tree.png}
+\end{figure}
