@@ -1,6 +1,9 @@
 \section{Exploratory Data Analysis}
 \label{sec:eda}
 
+\subsection{Data description}
+\label{subsec:description}
+
 The provided dataset contains personal information of several people
 (8164 samples), such as date of birth and current employment and maps
 it to the observation if the person became unemployed in the next 12 months.
@@ -67,4 +70,28 @@ The following list details what could be obtained exploring the data
     (see \vref{tab:school_level_value_counts}).
 
 \end{description}
+
+
+\subsection{Data exploration}
+\label{subsec:exploration}
+
+To get some further insights from the data the correlation matrix was
+inspected.
+It was split in multiple plots to ease this process \vref{fig:cross-matrix}.
+Some pre-processing was necessary to produce the correlation matrix
+see \vref{sec:data} for a description.
+
+Some insights were expected, for example, the categorical dummy variables
+have a strong negative correlation between themselves.
+These dummy variables are not independent which will present a challenge
+to linear models (consider applying PCA if using linear models).
+There is a strong (negative or positive) correlation between the \emph{target}
+and the \emph{domestic status}--\emph{married 2},
+\emph{domestic relationship type}--\emph{has husband}, which could be
+interesting to explore.
+Also as expected the \emph{birth date} is connected with the
+\emph{domestic status} classes, the connection with \emph{school level} is
+not evident.
+Finally there are severall connections between specific \emph{countries of
+origin} and \emph{school level} and \emph{ethnicity}.
 

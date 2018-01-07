@@ -1,26 +1,16 @@
-import os
-from operator import itemgetter
-
 import numpy as np
-from sklearn import discriminant_analysis
 from sklearn import ensemble
-from sklearn import linear_model
-from sklearn import naive_bayes
-from sklearn import neighbors
 from sklearn import tree
-from sklearn.externals import joblib
 
 from exploration import modelling
 from exploration.data_exploration import X_train, y_train, X_test, y_test
 from exploration.modelling import cv
-
-try:
-    BASE_DIR = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-except:
-    BASE_DIR = os.getcwd()
-
-MODEL_DIR = os.path.join(BASE_DIR, 'data/models')
+from exploration.utils import (load_models,
+                               save_models,
+                               get_best,
+                               replace_if_better,
+                               sort_results,
+                               )
 
 
 def format_result(result):
@@ -32,36 +22,8 @@ def format_result(result):
     return res
 
 
-def load_models():
-    results = {}
-    for fname in os.listdir(MODEL_DIR):
-        model_name = fname.split('.')[0]
-        fpath = os.path.join(MODEL_DIR, fname)
-        results[model_name] = joblib.load(fpath)
-    return results
-
-
-def save_models(results):
-    for name, res in results.items():
-        print('%s.pkl' % os.path.join(MODEL_DIR, name))
-        joblib.dump(res, '%s.pkl' % os.path.join(MODEL_DIR, name))
-
-
-def replace_if_better(res, results):
-    if res['name'] not in results:
-        results[res['name']] = res
-        return True
-
-    elif res['score'] > results[res['name']]['score']:
-        print('!! IMPROVEMENT !!')
-        results[res['name']] = res
-        return True
-
-    return False
-
-
 def format_table(results):
-    results = sorted(results.values(), key=itemgetter('score'), reverse=True)
+    results = sort_results(results)
     txt = ''
     for res in results:
         txt += '{} & {:.4f} \\\\\n'.format(
@@ -83,19 +45,19 @@ model = {
         'learning_rate': np.arange(0.05, 0.2, 0.05),
         'n_estimators': range(1, 400),
         # 'subsample': 1.0,
-        # 'criterion': 'friedman_mse',
-        # 'min_samples_split': range(1, 400),
-        # 'min_samples_leaf': 1,
+        'criterion': ['friedman_mse', 'mse', 'mae'],
+        'min_samples_split': range(1, 400),
+        'min_samples_leaf': range(1, 400),
         # 'min_weight_fraction_leaf': 0.0,
         'max_depth': range(1, 20),
         # 'min_impurity_decrease': 0.0,
         # 'min_impurity_split': None,
         # 'init': None,
         # 'random_state': None,
-        # 'max_features': None,
+        'max_features': [None, 'sqrt', 'log2'],
         # 'verbose': 0,
         # 'max_leaf_nodes': None,
-        # 'warm_start': False,
+        'warm_start': [False, True],
         # 'presort': 'auto'
     },
 }
@@ -121,8 +83,8 @@ model = {
             tree.DecisionTreeClassifier(criterion='entropy', max_depth=4),
         ],
         'n_estimators': range(1, 500),
-        # 'learning_rate': np.arange(.5, 2.0, .2),
-        # 'algorithm': 'SAMME.R',
+        'learning_rate': np.arange(.05, 2.0, .2),
+        'algorithm': ['SAMME.R', 'SAMME'],
         # 'random_state': None,
     },
 }
@@ -148,13 +110,12 @@ model = {
             ensemble.RandomForestClassifier(max_depth=2),
         ],
         'n_estimators': range(1, 500),
-        # 'max_samples': [1.0, .5],
-        # 'max_features': 1.0,
+        'max_samples': np.arange(.5, 1.0, .1),
+        'max_features': np.arange(.5, 1.0, .1),
         # 'bootstrap': True,
         # 'bootstrap_features': False,
         # 'oob_score': False,
         # 'warm_start': False,
-        # 'n_jobs': 1,
         # 'random_state': None,
         # 'verbose': 0
     },
@@ -223,7 +184,7 @@ print(format_result(result))
 
 save_models(results)
 
-best = sorted(results.values(), key=itemgetter('score'), reverse=True)[0]
+best = get_best(results)
 print(format_result(best))
 
 print('\n\n')

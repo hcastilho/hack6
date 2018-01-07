@@ -4,8 +4,8 @@
 \section{Initial tests}
 \label{sec:initialTests}
 To get a feelling of the baseline performance of the models available in
-the \emph{scikit} package severall where tried with the default parameters
-(except where not possible), results in \vref{tab:initialModelScores}.
+the \emph{scikit} package severall were tried with the default parameters
+(except were not possible), see \vref{tab:initialModelScores}.
 
 \begin{table}[!h]
     \caption{}
@@ -33,14 +33,149 @@ the \emph{scikit} package severall where tried with the default parameters
 
 With the default parameters there is, as expected, a clear dominance of
 ensemble models.
-The top 5 where selected for further parameter tuning.
+The top 5 were selected for further parameter tuning.
 
-\section{Model tuning}
+\section{Model tuning \& selection}
 \label{sec:modelTuning}
 
-\blindtext
+Each of the models was optimized by randomly searching a small part of the
+parameter space.
+The portion to explore was determined empirically by careful study of
+each of the parameter.
+The results are detailed in \vref{tab:hyperModelScores}.
 
-\section{Model selection}
-\label{sec:modelSelection}
+\begin{table}[!h]
+    \caption{}
+    \label{tab:hyperModelScores}
+    \centering
+    \begin{tabular}{cc}
+        Model & AUC ROC Score \\
+        \hline
+        GradientBoostingClassifier & 0.9369 \\
+        AdaBoostClassifier & 0.9329 \\
+        RandomForestClassifier & 0.9308 \\
+        VotingClassifier & 0.9299 \\
+        BaggingClassifier & 0.9143 \\
+    \end{tabular}
+\end{table}
 
-\blindtext
+After tuning all models were able to achieve AUR ROC scores in the .9 range,
+but \emph{GradientBoostingClassifier} outperformed the others.
+As there are no other constraints model selection is based solely on the score.
+
+
+\section{Feature Elimination}
+\label{sec:featureElimination}
+
+Running recursive feature elimination on the model identified in the previous
+section the optimal number of features was determined to be 31 and are the
+following:
+\begin{itemize}
+    \item birth date
+    \item interest earned
+    \item monthly work
+    \item job type--federal-gov
+    \item job type--self-emp-not-inc
+    \item school level--10th
+    \item school level--advanced post graduate
+    \item school level--college graduate
+    \item school level--primary school
+    \item school level--secondary
+    \item school level--some post graduate
+    \item domestic status--married 1
+    \item domestic status--married 2
+    \item domestic status--spouse passed
+    \item profession--C-level
+    \item profession--defense contractor
+    \item profession--mechanic
+    \item profession--other
+    \item profession--secretarial
+    \item profession--specialist technician
+    \item profession--trucking
+    \item profession--vocational
+    \item domestic relationship type--has husband
+    \item domestic relationship type--not living with family
+    \item ethnicity--afro american
+    \item country of origin--GR
+    \item country of origin--HU
+    \item country of origin--IE
+    \item country of origin--JP
+    \item country of origin--PH
+    \item country of origin--US
+\end{itemize}
+
+\begin{figure}[!h]
+    \caption{Score change.}
+    \label{fig:score-features}
+    \centering
+    \input{././img/score-features.pgf}
+\end{figure}
+
+
+\Vref{fig:score-features} displays how the AUC ROC score changes with  the number of features.
+Since there are no computational limitations and the prediction does not
+deteriorate with the number of features this exercise is a mere curiosity.
+
+Is is interesting however to compare the selected features with their
+correlation (see \vref{tab:feature-correlation}) with the target,
+remember that a positive correlation means it more likely to end up
+unemployed in 12 months.
+The selected features that correlate positively with being unemployed
+soon are presented in the following list.
+Note that this list says nothing of the decision surface of our model,
+having any combination of these features does not mean that you are
+more likely to become unemployed.
+\begin{itemize}
+    \item birth date
+    \item school level--10th
+    \item school level--secondary
+    \item domestic status--spouse passed
+    \item profession--mechanic
+    \item profession--other
+    \item profession--secretarial
+    \item profession--trucking
+    \item profession--vocational
+    \item domestic relationship type--not living with family
+    \item ethnicity--afro american
+    \item country of origin--US
+\end{itemize}
+
+
+\begin{table}[!h]
+\caption{Selected features and respective correlation.}
+\label{tab:feature-correlation}
+\centering
+\begin{tabular}{cc}
+    birth date & 0.114102 \\
+    interest earned & -0.148656 \\
+    monthly work & -0.110180 \\
+    job type--federal-gov & -0.042745 \\
+    job type--self-emp-not-inc & -0.065876 \\
+    school level--10th & 0.047029 \\
+    school level--advanced post graduate & -0.139795 \\
+    school level--college graduate & -0.129046 \\
+    school level--primary school & -0.077406 \\
+    school level--secondary & 0.083645 \\
+    school level--some post graduate & -0.145206 \\
+    domestic status--married 1 & -0.047914 \\
+    domestic status--married 2 & -0.469246 \\
+    domestic status--spouse passed & 0.050169 \\
+    profession--C-level & -0.131167 \\
+    profession--defense contractor & -0.010123 \\
+    profession--mechanic & 0.046294 \\
+    profession--other & 0.105133 \\
+    profession--secretarial & 0.036197 \\
+    profession--specialist technician & -0.171728 \\
+    profession--trucking & 0.005404 \\
+    profession--vocational & 0.011720 \\
+    domestic relationship type--has husband & -0.481157 \\
+    domestic relationship type--not living with family & 0.094195 \\
+    ethnicity--afro american & 0.068792 \\
+    country of origin--GR & -0.016763 \\
+    country of origin--HU & -0.016763 \\
+    country of origin--IE & -0.009930 \\
+    country of origin--JP & -0.027360 \\
+    country of origin--PH & -0.024337 \\
+    country of origin--US & 0.004980 \\
+\end{tabular}
+\end{table}

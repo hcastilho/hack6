@@ -1,14 +1,15 @@
 import os
-from datetime import date
+from itertools import tee
 
-import pandas as pd
-import pycountry
-from dateutil import parser
-from fuzzywuzzy import process
-from sklearn import model_selection
-from sklearn import preprocessing
 import matplotlib
 import matplotlib.pyplot as plt
+import pandas as pd
+import pycountry
+import seaborn as sns
+from fuzzywuzzy import process
+from sklearn import model_selection
+
+from exploration.utils import BASE_DIR, latex_table
 
 OUTPUT = False
 STORE = False
@@ -18,11 +19,6 @@ STORE = False
 from matplotlib.backends.backend_pgf import FigureCanvasPgf
 matplotlib.backend_bases.register_backend('pgf', FigureCanvasPgf)
 
-try:
-    BASE_DIR = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-except:
-    BASE_DIR = os.getcwd()
 
 pycountry.countries._load()
 dataset = pd.read_csv(os.path.join(BASE_DIR, 'data', 'train.csv'))
@@ -58,24 +54,6 @@ categorical_columns = [
 # for col in categorical_columns:
 #     print('\n', col)
 #     print(dataset[col].value_counts())
-
-
-def latex_table(data, pos='', table_spec=''):
-    table = ''
-    for row in data:
-        if not table:
-            if not table_spec:
-                table_spec = 'c' * len(row)
-            table_spec = '{' + table_spec + '}'
-            if not pos:
-                pos=''
-            table = '    \\begin{{tabular}}{pos}{table_spec}\n'.format(
-                pos=pos,
-                table_spec=table_spec,
-            )
-        table += '        ' + ' & '.join(map(str, row)) + ' \\\\\n'
-    table += '    \\end{tabular}\n'
-    return table
 
 
 def country_to_internal(txt):
@@ -225,10 +203,10 @@ if OUTPUT:
     if STORE:
         plt.savefig(
             os.path.join(BASE_DIR,
-                         'doc/report/img/interest_earned_freq.pgf'))
+                         'doc/report/img/interest_earned_freq.png'))
         plt.savefig(
             os.path.join(BASE_DIR,
-                         'doc/report/img/interest_earned_freq.png'))
+                         'doc/report/img/interest_earned_freq.pgf'))
     else:
         plt.show()
 
@@ -282,3 +260,73 @@ X_train, X_test, y_train, y_test = model_selection.train_test_split(
     test_size=0.4,
     random_state=0
 )
+
+
+#####################
+# Random stuff
+#####################
+
+
+def plot_corr(df, size=10):
+    corr = df.corr()
+    fig, ax = plt.subplots(figsize=(size, size))
+    ax.matshow(corr)
+    plt.xticks(range(len(corr.columns)), corr.columns)
+    plt.yticks(range(len(corr.columns)), corr.columns)
+
+
+def windows(iterable, size):
+    """Sliding window iterator"""
+    iters = tee(iterable, size)
+    for i in range(1, size):
+        for each in iters[i:]:
+            next(each, None)
+    return zip(*iters)
+
+
+def plot_corr_split(df, window_size=10, size=20, h=None, w=None):
+    """Plot graphical correlation matrix split"""
+    corr = df.corr()
+    width = corr.shape[-1]
+
+    for i in range(0, width, window_size):
+        cols = corr.columns[i:min(i + window_size, width)]
+
+        # Only show half of the correlation matrix it is diagonally
+        # symmetric
+        for j in range(i, width, window_size):
+            rows = corr.columns[j:min(j + window_size, width)]
+
+            sub_corr = corr[[*cols]].loc[[*rows]]
+
+            if h is not None:
+                fig, ax = plt.subplots(figsize=(w, h))
+            else:
+                fig, ax = plt.subplots(figsize=(size, size))
+
+            # ax.matshow(sub_corr)
+            # plt.xticks(range(window_size), cols)
+            # plt.yticks(range(window_size), rows)
+
+            ax = sns.heatmap(sub_corr,
+                             xticklabels=cols,
+                             yticklabels=rows,
+                             ax=ax)
+
+            # ax.figure.subplots_adjust(left=0.5, bottom=0.5)
+            ax.figure.tight_layout()
+            if OUTPUT:
+                if STORE:
+                    plt.savefig(
+                        os.path.join(
+                            BASE_DIR,
+                            'doc/report/img/cross-matrix-%s-%s.pgf'
+                            % (int(i/window_size), int(j/window_size)),
+                        )
+                    )
+                else:
+                    plt.show()
+
+
+plot_corr_split(dataset, 34, h=10, w=12)
+

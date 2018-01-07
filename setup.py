@@ -25,6 +25,7 @@ requirements = [
     'python-levenshtein',
     'scikit-learn',
     'scipy',
+    'seaborn',
 ]
 
 setup_requirements = [

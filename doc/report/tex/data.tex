@@ -12,11 +12,11 @@ Finally section \vref{subsec:splitting} breaks down the train/test split.
 \subsection{Data cleaning}
 \label{subsec:cleaning}
 
-On data import the \emph{birth dates} where converted to naive dates as no
+On data import the \emph{birth dates} were converted to naive dates as no
 timezone information was provided.
 It's doubtful the timezone would provide any useful information.
 
-The \emph{countries of origin} where converted
+The \emph{countries of origin} were converted
 to the corresponding \emph{ISO 3166--1 alpha-2} representation.
 Some inputs required special rules.
 Especially ambiguous was \emph{dr} which
@@ -25,17 +25,17 @@ even if the race for these inputs suggests it's not (mostly white).
 
 All categorical data columns was kept as is, there was not enough information
 to reach any conclusion.
-% TODO after tuning maybe we can remove columns
 
 
 \subsection{Feature engineering}
 \label{subsec:feature}
 
-\emph{birth dates} where converted to timestamps.
+\emph{birth dates} were converted to timestamps.
 In the dataset earned dividends and gender do not change,
-these properties where dropped since they convey no useful information.
+these properties were dropped since they convey no useful information.
 If new samples include this value this decision will be reconsidered.
 All categorical data was turned into dummy class variables.
+
 
 \subsection{Train/test splitting}
 \label{subsec:splitting}
