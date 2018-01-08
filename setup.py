@@ -12,8 +12,6 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'django',
-    'djangorestframework',
     'fuzzywuzzy',
     'graphviz',
     'jupyter',
@@ -27,6 +25,15 @@ requirements = [
     'scikit-learn',
     'scipy',
     'seaborn',
+    'category_encoders',
+
+    # Web
+    'gunicorn',
+    'flask',
+    'peewee',
+    'psycopg2',
+    # 'django',
+    # 'djangorestframework',
 ]
 
 setup_requirements = [
