@@ -1,2 +1,2 @@
 
-web: gunicorn hack6.app:wsgi --log-file -
+web: gunicorn app:wsgi --log-file -
