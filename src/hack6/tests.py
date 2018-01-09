@@ -13,7 +13,7 @@ from hack6.modelling import DATA_DIR, MODEL_DIR, hyper_fit
 dataset = pd.read_csv(os.path.join(DATA_DIR, 'train.csv'))
 
 # TODO test with and without
-dataset = dataset.drop(['earned dividends', 'gender'], axis=1)
+# dataset = dataset.drop(['earned dividends', 'gender'], axis=1)
 
 features = dataset.drop(['target'], axis=1)
 target = dataset['target']

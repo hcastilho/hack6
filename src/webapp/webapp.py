@@ -77,6 +77,8 @@ def predict():
     # flask provides a deserialization convenience function called
     # get_json that will work if the mimetype is application/json
     obs_dict = request.get_json()
+    print(obs_dict)
+    print(request)
     _id = obs_dict['id']
     observation = obs_dict['observation']
     # now do what we already learned in the notebooks about how to transform

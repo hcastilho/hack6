@@ -42,6 +42,7 @@ setup_requirements = [
 
 test_requirements = [
     'pytest',
+    'pytest-flask',
 ]
 
 setup(

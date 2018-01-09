@@ -1,38 +1,59 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""Tests for `hack6` package."""
+import json
 
 import pytest
 
-from click.testing import CliRunner
 
-from hack6 import hack6
-from hack6 import cli
-
-
-@pytest.fixture
-def response():
-    """Sample pytest fixture.
-
-    See more at: http://doc.pytest.org/en/latest/fixture.html
-    """
-    # import requests
-    # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
+def test_root(client):
+    response = client.get('/')
+    assert response.status_code == 404
 
 
-def test_content(response):
-    """Sample pytest test function with the pytest fixture as an argument."""
-    # from bs4 import BeautifulSoup
-    # assert 'GitHub' in BeautifulSoup(response.content).title.string
+def test_predict(client):
+    # TODO store observation
+    # TODO check for true_class
+    # TODO error handling
+
+    response = client.post('/predict',
+                           data=json.dumps({
+                               'id': 1,
+                               'observation': [
+                                   '19723',
+                                   '1990-12-24',
+                                   'private',
+                                   'entry level college',
+                                   'single',
+                                   'C-level',
+                                   'not living with family',
+                                   'white and privileged',
+                                   'Female',
+                                   '0',
+                                   '0',
+                                   '160',
+                                   'u.s.',
+                                   # '1'
+                               ],
+                           }),
+                           headers={
+                               'Content-Type': 'application/json'
+                           })
+    assert response.status_code == 200
 
 
-def test_command_line_interface():
-    """Test the CLI."""
-    runner = CliRunner()
-    result = runner.invoke(cli.main)
-    assert result.exit_code == 0
-    assert 'hack6.cli.main' in result.output
-    help_result = runner.invoke(cli.main, ['--help'])
-    assert help_result.exit_code == 0
-    assert '--help  Show this message and exit.' in help_result.output
+@pytest.mark.skip
+def test_update(client):
+    response = client.post('/update',
+                           data=json.dumps({
+                               'id': 1,
+                               'observation': {'true_class': 1},
+                           }),
+                           headers={
+                               'Content-Type': 'application/json'
+                           })
+    assert response.status_code == 200
+
+
+@pytest.mark.skip
+def test_list_db_contents(client):
+    response = client.get('/list-db-contents')
+    assert response.status_code == 200
+
