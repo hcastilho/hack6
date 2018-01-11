@@ -2,6 +2,7 @@ import os
 
 import multiprocessing
 from sklearn import model_selection
+from sklearn.externals import joblib
 
 try:
     BASE_DIR = os.path.dirname(
@@ -44,3 +45,21 @@ def hyper_fit(pipeline, params, cv, xtrain, ytrain,
 
     rs.fit(xtrain, ytrain)
     return rs
+
+
+def replace_if_better(best, new, x_test, y_test):
+    best_score = best.score(x_test, y_test)
+
+    new_score = new.score(x_test, y_test)
+
+    print("Score:", new_score)
+    print("Best:", best_score)
+
+    if new_score > best_score:
+        print("!!!!!!!!!!!!")
+        print("!! BETTER !!")
+        print("!!!!!!!!!!!!")
+        joblib.dump(new, '%s.pkl' % os.path.join(MODEL_DIR, 'best'))
+        return new
+
+    return best

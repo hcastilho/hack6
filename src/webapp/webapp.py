@@ -58,7 +58,7 @@ DB.create_tables([Prediction], safe=True)
 
 
 columns = joblib.load(os.path.join(MODEL_DIR, 'columns.pkl'))
-pipe = joblib.load(os.path.join(MODEL_DIR, 'pipe.pkl'))
+pipe = joblib.load(os.path.join(MODEL_DIR, 'best.pkl'))
 dtypes = joblib.load(os.path.join(MODEL_DIR, 'dtypes.pkl'))
 
 
