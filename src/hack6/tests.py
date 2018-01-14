@@ -16,10 +16,15 @@ from hack6.modelling import DATA_DIR, MODEL_DIR, hyper_fit, replace_if_better
 # Setup
 ##########################
 dataset = pd.read_csv(os.path.join(DATA_DIR, 'train.csv'))
-# TODO test with and without
+
+dataset = dataset.set_index('id')
+
 # dataset = dataset.drop(['earned dividends', 'gender'], axis=1)
 
-best = joblib.load('%s.pkl' % os.path.join(MODEL_DIR, 'pipe'))
+try:
+    best = joblib.load('%s.pkl' % os.path.join(MODEL_DIR, 'pipe'))
+except FileNotFoundError:
+    best = None
 
 features = dataset.drop(['target'], axis=1)
 target = dataset['target']
@@ -35,9 +40,9 @@ cv = model_selection.ShuffleSplit(n_splits=5,
                                   random_state=1)
 
 # joblib.dump(best, '%s.pkl' % os.path.join(MODEL_DIR, 'pipe'))
-# joblib.dump(X_train.columns.tolist(),
-#             '%s.pkl' % os.path.join(MODEL_DIR, 'columns'))
-# joblib.dump(X_train.dtypes, '%s.pkl' % os.path.join(MODEL_DIR, 'dtypes'))
+joblib.dump(X_train.columns.tolist(),
+            '%s.pkl' % os.path.join(MODEL_DIR, 'columns'))
+joblib.dump(X_train.dtypes, '%s.pkl' % os.path.join(MODEL_DIR, 'dtypes'))
 
 
 ##########################
@@ -49,15 +54,15 @@ pipe = pipeline.Pipeline([
         ('gb', ensemble.GradientBoostingClassifier()),
     ])
 params = {
-    'gb__loss': ['deviance', 'exponential'],
+    # 'gb__loss': ['deviance', 'exponential'],
     'gb__learning_rate': np.arange(0.05, 0.2, 0.05),
-    'gb__n_estimators': range(1, 600),
+    'gb__n_estimators': range(1, 400),
     # 'gb__subsample': 1.0,
     'gb__criterion': ['friedman_mse', 'mse', 'mae'],
     'gb__min_samples_split': range(1, 400),
     'gb__min_samples_leaf': range(1, 400),
     # 'gb__min_weight_fraction_leaf': 0.0,
-    'gb__max_depth': range(1, 20),
+    # 'gb__max_depth': range(1, 20),
     # 'gb__min_impurity_decrease': 0.0,
     # 'gb__min_impurity_split': None,
     # 'gb__init': None,
@@ -68,7 +73,7 @@ params = {
     # 'gb__warm_start': [False, True],
     # 'gb__presort': 'auto'
 }
-search_cv = hyper_fit(pipe, params, cv, X_train, y_train, n_iter=40, n_jobs=-1)
+search_cv = hyper_fit(pipe, params, cv, X_train, y_train, n_iter=20, n_jobs=-1)
 pipe = search_cv.best_estimator_
 best = replace_if_better(best, pipe, X_test, y_test)
 

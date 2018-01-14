@@ -48,6 +48,12 @@ def hyper_fit(pipeline, params, cv, xtrain, ytrain,
 
 
 def replace_if_better(best, new, x_test, y_test):
+    if best is None:
+        new_score = new.score(x_test, y_test)
+        joblib.dump(new, '%s.pkl' % os.path.join(MODEL_DIR, 'best'))
+        print("Score:", new_score)
+        return new
+
     best_score = best.score(x_test, y_test)
 
     new_score = new.score(x_test, y_test)

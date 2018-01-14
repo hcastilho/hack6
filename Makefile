@@ -75,6 +75,7 @@ lint: ## check style with flake8
 
 test: ## run tests quickly with the default Python
 	python setup.py test
+	py.test tests/
 
 run-local-db:
 	docker-compose -f compose/local/docker-compose.yml up

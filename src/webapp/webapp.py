@@ -1,4 +1,5 @@
 import os
+import logging
 # import json
 # import pickle
 
@@ -16,6 +17,8 @@ from playhouse.shortcuts import model_to_dict
 from sklearn.externals import joblib
 
 from hack6.modelling import MODEL_DIR
+
+logger = logging.getLogger(__name__)
 
 ########################################
 # Begin database stuff
@@ -74,29 +77,41 @@ app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # flask provides a deserialization convenience function called
-    # get_json that will work if the mimetype is application/json
+    logger.debug(request.data)
+
     obs_dict = request.get_json()
-    print(obs_dict)
-    print(request)
+
     _id = obs_dict['id']
     observation = obs_dict['observation']
-    # now do what we already learned in the notebooks about how to transform
-    # a single observation into a dataframe that will work with a pipeline
+
     obs = pd.DataFrame([observation], columns=columns).astype(dtypes)
-    # now get ourselves an actual prediction of the positive class
+
     proba = pipe.predict_proba(obs)[0, 1]
-    p = Prediction(
-        observation_id=_id,
-        proba=proba,
-        observation=request.data,
-    )
+
+    logger.debug(obs)
+    try:
+        p = Prediction.get(Prediction.observation_id == _id)
+
+    except Prediction.DoesNotExist:
+        p = Prediction(
+            observation_id=_id,
+            proba=proba,
+            observation=request.data,
+        )
+
+    else:
+        p.proba = proba
+        p.observation = request.data
+
     p.save()
+
     return jsonify({'proba': proba})
 
 
 @app.route('/update', methods=['POST'])
 def update():
+    logger.debug(request.data)
+
     obs = request.get_json()
     p = Prediction.get(Prediction.observation_id == obs['id'])
     p.true_class = obs['true_class']
