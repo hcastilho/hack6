@@ -83,7 +83,7 @@ params = {
     # 'gb__warm_start': [False, True],
     # 'gb__presort': 'auto'
 }
-search_cv = hyper_fit(pipe, params, cv, X_train, y_train, n_iter=5, n_jobs=-1)
+search_cv = hyper_fit(pipe, params, cv, X_train, y_train, n_iter=40, n_jobs=-1)
 pipe = search_cv.best_estimator_
 best = replace_if_better(best, pipe, X_test, y_test)
 
