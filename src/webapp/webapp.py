@@ -2,7 +2,7 @@ import os
 import logging
 # import json
 # import pickle
-
+import flask
 import pandas as pd
 from flask import Flask, jsonify, request
 from peewee import (SqliteDatabase,
@@ -114,7 +114,11 @@ def update():
     logger.debug(request.data)
 
     obs = request.get_json()
-    p = Prediction.get(Prediction.observation_id == obs['id'])
+    try:
+        p = Prediction.get(Prediction.observation_id == obs['id'])
+    except Prediction.DoesNotExist:
+        return flask.Response(status=404)
+
     p.true_class = obs['true_class']
     p.save()
     return jsonify(model_to_dict(p))

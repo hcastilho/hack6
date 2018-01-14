@@ -42,7 +42,7 @@ def test_predict(client):
     assert response.status_code == 200
 
 
-def test_update(client):
+#def test_update(client):
     response = client.post('/update',
                            data=json.dumps({
                                'id': 1,
