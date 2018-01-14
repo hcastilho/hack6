@@ -44,7 +44,7 @@ else:
 class Prediction(Model):
     observation_id = IntegerField(unique=True)
     observation = TextField()
-    proba = FloatField()
+    proba = FloatField(null=True)
     true_class = IntegerField(null=True)
 
     class Meta:
@@ -75,13 +75,34 @@ dtypes = joblib.load(os.path.join(MODEL_DIR, 'dtypes.pkl'))
 app = Flask(__name__)
 
 
+def get_or_create_prediction(_id):
+    try:
+        p = Prediction.get(Prediction.observation_id == _id)
+
+    except Prediction.DoesNotExist:
+        p = Prediction(observation_id=_id)
+
+    return p
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     logger.debug(request.data)
 
     obs_dict = request.get_json()
 
+    # Validate input
+    for input_ in ('id', 'observation'):
+        if input_ not in obs_dict:
+            return flask.Response("Computer says no! %s missing" % input_,
+                                  status=400)
+
     _id = obs_dict['id']
+
+    p = get_or_create_prediction(_id)
+    p.observation = request.data
+    p.save()
+
     observation = obs_dict['observation']
 
     # columns parameter ensures the df is in the right order
@@ -90,20 +111,13 @@ def predict():
 
     proba = pipe.predict_proba(obs)[0, 1]
 
-    try:
-        p = Prediction.get(Prediction.observation_id == _id)
-
-    except Prediction.DoesNotExist:
-        p = Prediction(
-            observation_id=_id,
-            proba=proba,
-            observation=request.data,
-        )
-
-    else:
-        p.proba = proba
-        p.observation = request.data
-
+    print(proba)
+    print(proba)
+    print(proba)
+    print(proba)
+    print(proba)
+    p.proba = proba
+    p.observation = request.data
     p.save()
 
     return jsonify({'proba': proba})
@@ -112,15 +126,23 @@ def predict():
 @app.route('/update', methods=['POST'])
 def update():
     logger.debug(request.data)
-
     obs = request.get_json()
+
+    # Validate input
+    for input_ in ('id', 'true_class'):
+        if input_ not in obs:
+            return flask.Response("Computer says no! %s missing" % input_,
+                                  status=400)
+
     try:
         p = Prediction.get(Prediction.observation_id == obs['id'])
+
     except Prediction.DoesNotExist:
-        return flask.Response(status=404)
+        return flask.Response("Nothing there to update, stahp!", status=404)
 
     p.true_class = obs['true_class']
     p.save()
+
     return jsonify(model_to_dict(p))
 
 

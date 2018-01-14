@@ -6,8 +6,9 @@ from urllib.parse import urljoin
 
 URL = 'https://peaceful-tor-58476.herokuapp.com/'
 
+id_ = randint(1, 10 * 100)
 data = {
-    'id': randint(1, 10 * 100),
+    'id': id_,
     'observation': {
         'birth date': '1990-12-24',
         'job type': 'private',
@@ -40,7 +41,7 @@ assert response.status_code == 200
 # def test_update(client):
 response = requests.post(urljoin(URL, '/update'),
                          data=json.dumps({
-                             'id': 1,
+                             'id': id_,
                              'true_class': 1,
                          }),
                          headers={'Content-Type': 'application/json'})
@@ -49,6 +50,6 @@ assert response.status_code == 200
 response = requests.get(urljoin(URL, '/list-db-contents'))
 assert response.status_code == 200
 
-data = response.json
+data = response.json()
 # pprint(data)
 assert len(data) >= 1
