@@ -27,7 +27,7 @@ dataset = dataset.set_index('id')
 # dataset = dataset.drop(['earned dividends', 'gender'], axis=1)
 
 try:
-    best = joblib.load('%s.pkl' % os.path.join(MODEL_DIR, 'pipe'))
+    best = joblib.load('%s.pkl' % os.path.join(MODEL_DIR, 'best'))
 except FileNotFoundError:
     best = None
 
@@ -39,6 +39,10 @@ X_train, X_test, y_train, y_test = model_selection.train_test_split(
     test_size=0.4,
     random_state=0
 )
+X_train = X_train.copy()
+y_train = y_train.copy()
+X_test = X_test.copy()
+y_test = y_test.copy()
 
 cv = model_selection.ShuffleSplit(n_splits=5,
                                   test_size=0.3,
@@ -61,25 +65,25 @@ pipe = pipeline.Pipeline([
     ])
 params = {
     # 'gb__loss': ['deviance', 'exponential'],
-    # 'gb__learning_rate': np.arange(0.05, 0.2, 0.05),
-    # 'gb__n_estimators': range(1, 400),
+    'gb__learning_rate': np.arange(0.05, 0.2, 0.05),
+    'gb__n_estimators': range(1, 400),
     # 'gb__subsample': 1.0,
-    # 'gb__criterion': ['friedman_mse', 'mse', 'mae'],
-    # 'gb__min_samples_split': range(1, 400),
-    # 'gb__min_samples_leaf': range(1, 400),
+    'gb__criterion': ['friedman_mse', 'mse', 'mae'],
+    'gb__min_samples_split': range(1, 400),
+    'gb__min_samples_leaf': range(1, 400),
     # 'gb__min_weight_fraction_leaf': 0.0,
-    # 'gb__max_depth': range(1, 20),
+    'gb__max_depth': range(1, 20),
     # 'gb__min_impurity_decrease': 0.0,
     # 'gb__min_impurity_split': None,
     # 'gb__init': None,
     # 'gb__random_state': None,
-    # 'gb__max_features': [None, 'sqrt', 'log2'],
+    'gb__max_features': [None, 'sqrt', 'log2'],
     # 'gb__verbose': 0,
     # 'gb__max_leaf_nodes': None,
     # 'gb__warm_start': [False, True],
     # 'gb__presort': 'auto'
 }
-search_cv = hyper_fit(pipe, params, cv, X_train, y_train, n_iter=1, n_jobs=-1)
+search_cv = hyper_fit(pipe, params, cv, X_train, y_train, n_iter=5, n_jobs=-1)
 pipe = search_cv.best_estimator_
 best = replace_if_better(best, pipe, X_test, y_test)
 

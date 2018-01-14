@@ -38,7 +38,8 @@ class ForceDType(BaseEstimator, TransformerMixin):
             X.loc[:, 'earned dividends'] = np.nan
 
         try:
-            X.loc[:, 'interest earned'] = X['interest earned'].astype(np.float64)
+            X.loc[:, 'interest earned'] = X[
+                'interest earned'].astype(np.float64)
         except (ValueError, TypeError):
             X.loc[:, 'interest earned'] = np.nan
 

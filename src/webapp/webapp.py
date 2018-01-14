@@ -113,6 +113,10 @@ def predict():
     logger.debug(request.data)
 
     obs_dict = request.get_json()
+    if not obs_dict:
+        msg = "Empty request"
+        logger.debug(msg)
+        return flask.Response(msg, status=400)
 
     # Validate input
     for k in ('id', 'observation'):
@@ -138,7 +142,6 @@ def predict():
             logger.debug(msg)
             return flask.Response(msg, status=400)
         except TypeError:
-            # pass
             observation[k] = np.nan
 
     p = get_or_create_prediction(_id)
@@ -149,21 +152,22 @@ def predict():
     obs = pd.DataFrame([observation], columns=columns)
     logger.debug(obs)
 
-    logger.debug(obs)
-
-    proba = pipe.predict_proba(obs)[0, 1]
-
-    p.proba = proba
+    p.proba = pipe.predict_proba(obs)[0, 1]
     p.observation = request.data
     p.save()
 
-    return jsonify({'proba': proba})
+    return jsonify({'proba': p.proba})
 
 
 @app.route('/update', methods=['POST'])
 def update():
     logger.debug(request.data)
     obs = request.get_json()
+
+    if not obs:
+        msg = "Empty request"
+        logger.debug(msg)
+        return flask.Response(msg, status=400)
 
     # Validate input
     for input_ in ('id', 'true_class'):
