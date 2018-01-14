@@ -11,27 +11,22 @@ def test_root(client):
 
 
 def test_predict(client):
-    # TODO store observation
-    # TODO check for true_class
-    # TODO error handling
     data = {
         'id': randint(1, 10*100),
-        'observation': [
-            # '19723',
-            '1990-12-24',
-            'private',
-            'entry level college',
-            'single',
-            'C-level',
-            'not living with family',
-            'white and privileged',
-            'Female',
-            '0',
-            '0',
-            '160',
-            'u.s.',
-            # '1'
-        ],
+        'observation': {
+            'birth date': '1990-12-24',
+            'job type': 'private',
+            'school level': 'entry level college',
+            'domestic status': 'single',
+            'profession': 'C-level',
+            'domestic relationship type': 'not living with family',
+            'ethnicity': 'white and privileged',
+            'gender': 'Female',
+            'earned dividends': '0',
+            'interest earned': '0',
+            'monthly work': '160',
+            'country of origin': 'u.s.',
+        },
     }
 
     response = client.post('/predict',
@@ -63,8 +58,6 @@ def test_list_db_contents(client):
     response = client.get('/list-db-contents')
     assert response.status_code == 200
 
-    # data = response.json
+    data = response.json
     # pprint(data)
     assert len(data) >= 1
-
-    assert False

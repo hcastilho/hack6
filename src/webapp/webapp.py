@@ -84,11 +84,12 @@ def predict():
     _id = obs_dict['id']
     observation = obs_dict['observation']
 
-    obs = pd.DataFrame([observation], columns=columns).astype(dtypes)
+    # columns parameter ensures the df is in the right order
+    obs = pd.DataFrame([observation], columns=columns)
+    obs = obs.astype(dtypes)
 
     proba = pipe.predict_proba(obs)[0, 1]
 
-    logger.debug(obs)
     try:
         p = Prediction.get(Prediction.observation_id == _id)
 
