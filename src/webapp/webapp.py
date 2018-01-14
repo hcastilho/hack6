@@ -138,6 +138,7 @@ def predict():
             logger.debug(msg)
             return flask.Response(msg, status=400)
         except TypeError:
+            # pass
             observation[k] = np.nan
 
     p = get_or_create_prediction(_id)
@@ -146,7 +147,7 @@ def predict():
 
     # columns parameter ensures the df is in the right order
     obs = pd.DataFrame([observation], columns=columns)
-    obs = obs.astype(dtypes)
+    logger.debug(obs)
 
     logger.debug(obs)
 

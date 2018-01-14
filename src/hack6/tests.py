@@ -9,7 +9,12 @@ from sklearn import ensemble
 from sklearn import neural_network
 from sklearn.externals import joblib
 
-from hack6.modelling import DATA_DIR, MODEL_DIR, hyper_fit, replace_if_better
+from hack6.modelling import (DATA_DIR,
+                             MODEL_DIR,
+                             hyper_fit,
+                             replace_if_better,
+                             ForceDType,
+                             )
 
 
 ##########################
@@ -40,19 +45,18 @@ cv = model_selection.ShuffleSplit(n_splits=5,
                                   random_state=1)
 
 # joblib.dump(best, '%s.pkl' % os.path.join(MODEL_DIR, 'pipe'))
-joblib.dump(X_train.columns.tolist(),
-            '%s.pkl' % os.path.join(MODEL_DIR, 'columns'))
-joblib.dump(X_train.dtypes, '%s.pkl' % os.path.join(MODEL_DIR, 'dtypes'))
+# joblib.dump(X_train.columns.tolist(),
+#             '%s.pkl' % os.path.join(MODEL_DIR, 'columns'))
+# joblib.dump(X_train.dtypes, '%s.pkl' % os.path.join(MODEL_DIR, 'dtypes'))
 
 
 ##########################
 # GradientBoostClassifier
 ##########################
 pipe = pipeline.Pipeline([
+        ('dtype', ForceDType()),
         ('onehot', category_encoders.OneHotEncoder(handle_unknown='ignore')),
-        ('inputer', preprocessing.Imputer(
-            missing_values=np.nan,
-            strategy='mean')),
+        ('inputer', preprocessing.Imputer(strategy='mean')),
         ('gb', ensemble.GradientBoostingClassifier()),
     ])
 params = {
