@@ -111,11 +111,6 @@ def predict():
 
     proba = pipe.predict_proba(obs)[0, 1]
 
-    print(proba)
-    print(proba)
-    print(proba)
-    print(proba)
-    print(proba)
     p.proba = proba
     p.observation = request.data
     p.save()
