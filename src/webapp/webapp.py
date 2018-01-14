@@ -4,6 +4,7 @@ import logging
 # import pickle
 import flask
 import pandas as pd
+import numpy as np
 from flask import Flask, jsonify, request
 from peewee import (SqliteDatabase,
                     PostgresqlDatabase,
@@ -85,6 +86,28 @@ def get_or_create_prediction(_id):
     return p
 
 
+observation_keys = (
+        'birth date',
+        'job type',
+        'school level',
+        'domestic status',
+        'profession',
+        'domestic relationship type',
+        'ethnicity',
+        'gender',
+        'earned dividends',
+        'interest earned',
+        'monthly work',
+        'country of origin',
+)
+
+numeric_keys = (
+    'earned dividends',
+    'interest earned',
+    'monthly work',
+)
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     logger.debug(request.data)
@@ -92,22 +115,40 @@ def predict():
     obs_dict = request.get_json()
 
     # Validate input
-    for input_ in ('id', 'observation'):
-        if input_ not in obs_dict:
-            return flask.Response("Computer says no! %s missing" % input_,
-                                  status=400)
+    for k in ('id', 'observation'):
+        if k not in obs_dict:
+            msg = "Computer says no! %s missing" % k
+            logger.debug(msg)
+            return flask.Response(msg, status=400)
 
     _id = obs_dict['id']
+    observation = obs_dict['observation']
+
+    for k in observation_keys:
+        if k not in observation:
+            msg = "Computer says no! %s missing" % k
+            logger.debug(msg)
+            return flask.Response(msg, status=400)
+
+    for k in numeric_keys:
+        try:
+            int(observation[k])
+        except ValueError:
+            msg = "%s, %s is not remotely number-like" % (observation[k], k)
+            logger.debug(msg)
+            return flask.Response(msg, status=400)
+        except TypeError:
+            observation[k] = np.nan
 
     p = get_or_create_prediction(_id)
     p.observation = request.data
     p.save()
 
-    observation = obs_dict['observation']
-
     # columns parameter ensures the df is in the right order
     obs = pd.DataFrame([observation], columns=columns)
     obs = obs.astype(dtypes)
+
+    logger.debug(obs)
 
     proba = pipe.predict_proba(obs)[0, 1]
 

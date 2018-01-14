@@ -11,7 +11,7 @@ from sklearn import model_selection
 
 from exploration.utils import BASE_DIR, latex_table
 
-OUTPUT = False
+OUTPUT = True
 STORE = False
 
 # Output pgf

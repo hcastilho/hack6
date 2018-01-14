@@ -50,30 +50,32 @@ joblib.dump(X_train.dtypes, '%s.pkl' % os.path.join(MODEL_DIR, 'dtypes'))
 ##########################
 pipe = pipeline.Pipeline([
         ('onehot', category_encoders.OneHotEncoder(handle_unknown='ignore')),
-        ('inputer', preprocessing.Imputer(strategy='mean')),
+        ('inputer', preprocessing.Imputer(
+            missing_values=np.nan,
+            strategy='mean')),
         ('gb', ensemble.GradientBoostingClassifier()),
     ])
 params = {
     # 'gb__loss': ['deviance', 'exponential'],
-    'gb__learning_rate': np.arange(0.05, 0.2, 0.05),
-    'gb__n_estimators': range(1, 400),
+    # 'gb__learning_rate': np.arange(0.05, 0.2, 0.05),
+    # 'gb__n_estimators': range(1, 400),
     # 'gb__subsample': 1.0,
-    'gb__criterion': ['friedman_mse', 'mse', 'mae'],
-    'gb__min_samples_split': range(1, 400),
-    'gb__min_samples_leaf': range(1, 400),
+    # 'gb__criterion': ['friedman_mse', 'mse', 'mae'],
+    # 'gb__min_samples_split': range(1, 400),
+    # 'gb__min_samples_leaf': range(1, 400),
     # 'gb__min_weight_fraction_leaf': 0.0,
     # 'gb__max_depth': range(1, 20),
     # 'gb__min_impurity_decrease': 0.0,
     # 'gb__min_impurity_split': None,
     # 'gb__init': None,
     # 'gb__random_state': None,
-    'gb__max_features': [None, 'sqrt', 'log2'],
+    # 'gb__max_features': [None, 'sqrt', 'log2'],
     # 'gb__verbose': 0,
     # 'gb__max_leaf_nodes': None,
     # 'gb__warm_start': [False, True],
     # 'gb__presort': 'auto'
 }
-search_cv = hyper_fit(pipe, params, cv, X_train, y_train, n_iter=20, n_jobs=-1)
+search_cv = hyper_fit(pipe, params, cv, X_train, y_train, n_iter=1, n_jobs=-1)
 pipe = search_cv.best_estimator_
 best = replace_if_better(best, pipe, X_test, y_test)
 

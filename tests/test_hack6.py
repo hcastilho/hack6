@@ -58,7 +58,7 @@ def test_categories_never_seen(client):
 def test_missing_column(client):
     response = client.post('/predict', data=json.dumps(dirty_examples[2]),
                            headers={'Content-Type': 'application/json'})
-    assert response.status_code == 200
+    assert response.status_code == 400
 
 
 def test_school_level_as_integer(client):
@@ -70,7 +70,7 @@ def test_school_level_as_integer(client):
 def test_monthly_work_as_str(client):
     response = client.post('/predict', data=json.dumps(dirty_examples[4]),
                            headers={'Content-Type': 'application/json'})
-    assert response.status_code == 200
+    assert response.status_code == 400
 
 
 def test_monthly_work_as_str_num(client):
@@ -88,13 +88,13 @@ def test_birth_date_diferent_format(client):
 def test_empty_obs(client):
     response = client.post('/predict', data=json.dumps(dirty_examples[7]),
                            headers={'Content-Type': 'application/json'})
-    assert response.status_code == 200
+    assert response.status_code == 400
 
 
 def test_empty_payload(client):
     response = client.post('/predict', data=json.dumps(dirty_examples[7]),
                            headers={'Content-Type': 'application/json'})
-    assert response.status_code == 200
+    assert response.status_code == 400
 
 
 def test_root(client):
