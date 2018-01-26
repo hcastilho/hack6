@@ -59,6 +59,7 @@ scipy==1.0.0
 seaborn==0.8.1
 simplegeneric==0.8.1      # via ipython
 six==1.11.0               # via bleach, cycler, html5lib, matplotlib, patsy, pip-tools, prompt-toolkit, python-dateutil, traitlets
+sqlalchemy==1.2.2
 statsmodels==0.8.0        # via category-encoders
 terminado==0.8.1          # via notebook
 testpath==0.3.1           # via nbconvert

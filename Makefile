@@ -97,6 +97,11 @@ doc/report/report.pdf: $(wildcard doc/report/*) $(wildcard doc/report/**/*)
 
 report: doc/report/report.pdf
 
+doc/final/final.pdf: $(wildcard doc/final/*) $(wildcard doc/final/**/*)
+	cd doc/final; latexmk -xelatex final.tex
+
+final: doc/final/final.pdf
+
 release: clean ## package and upload a release
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
@@ -109,11 +114,12 @@ dist: clean ## builds source and wheel package
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
-build: ## TODO
-	true
+run-db:
+	docker-compose -f docker-compose/local/docker-compose.yml up
 
-push: ## TODO
-	true
+restore-db: ## TODO
+	pg_restore --verbose --clean --no-acl --no-owner -h localhost -U postgres -d postgres data/heroku_dump/latest.dump
 
-all: build push
+psql:
+	psql -h localhost -U postgres postgres
 

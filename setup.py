@@ -12,6 +12,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
+    #
     'fuzzywuzzy',
     'graphviz',
     'jupyter',
@@ -32,8 +33,9 @@ requirements = [
     'flask',
     'peewee',
     'psycopg2',
-    # 'django',
-    # 'djangorestframework',
+
+    #
+    'sqlalchemy',
 ]
 
 setup_requirements = [
