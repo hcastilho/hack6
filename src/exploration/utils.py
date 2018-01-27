@@ -12,6 +12,34 @@ except:
 MODEL_DIR = os.path.join(BASE_DIR, 'data/models')
 
 
+datetime_columns = [
+    'birth date',
+]
+
+numerical_columns = [
+    'earned dividends',
+    'interest earned',
+    'monthly work',
+]
+
+categorical_columns = [
+    # 'id',
+    # 'birth date'
+    'job type',
+    'school level',
+    'domestic status',
+    'profession',
+    'domestic relationship type',
+    'ethnicity',
+    'gender',
+    # 'earned dividends',
+    # 'interest earned',
+    # 'monthly work',
+    'country of origin',
+    # 'target',
+]
+
+
 def load_models():
     results = {}
     for fname in os.listdir(MODEL_DIR):

@@ -6,27 +6,150 @@
     \maketitle
 
     \begin{abstract}
+        During a 10 day period, a deployed estimator received new data and
+        outcomes.
+
+        The received data had significant differences from the data used in
+        training, but the models was still able to produce a reasonable
+        estimation of the outcomes.
+        The AUC ROC score for the new outcomes was \(0.8752\).
+
+        Using the new data and outcomes to retrain the data does not result
+        in  very impressive improvement, but should progressively increase
+        as more outcomes arrive.
     \end{abstract}
 
-%    \tableofcontents
-%    \listoffigures
-%    \listoftables
 
-%    \input{./tex/eda}
-%
-%    \input{./tex/data}
-%
-%    \input{./tex/modelling}
-%
-%    \input{./tex/evaluation}
-%
-%    \appendix
-%    \input{./tex/eda_tables}
-%    \input{./tex/eda_figures}
-%
-%    \clearpage
-%    \input{./tex/bibliography}
+    \section{Intro}
+    \label{sec:intro}
+    In a previous report we analysed a dataset with characteristics of an
+    unknown population and if they became unemployed in the next 12 months.
+    We will assume knowledge of this report, if you are not familiar please
+    read it.
 
+    Several predictived models were tested and one was selected.
+    This model was deployed online to receive further data during a 10 day
+    period.
+    In this time we received both more population samples and outcomes.
+
+    In this report we analyse the behaviour of our deployed model in light
+    of the new information.
+
+
+    \section{Exploratory data analysis}
+    \label{sec:data}
+
+    During this 10 day period we received 9943 new samples and 498 new
+    outcomes.
+    In this section we will have a look at the new data and check for any
+    anomalies relative to the original data used to train the model.
+
+    Having a look at the data (\vref{sec:tables}) it's easy too spot that
+    there are significant differences from the data used to train our model.
+    We now have samples with \emph{eaned dividends} and different genders.
+    The proportions of the categories for \emph{domestic relationship type}
+    and \emph{domestic status} do not match.
+    There are also some changes in \emph{job types} and \emph{profession}
+    This is a considerable amount of change for our model to deal with.
+
+
+    \section{Model Analysis}
+    \label{sec:model}
+
+    Our model achieved an AUC ROC score of:
+
+    \[0.8752\]
+
+    Taking in consideration that the new population profile does no match the
+    one for which our model was trainned for it is still a high score.
+
+    We can also have a look at the output of the model for the samples
+    independently of our knowledge of the outcome.
+    Ideally our models should give a loot more outcomes near 0 and 1 than
+    in the middle.
+    So lets look at the histogram of our \emph{proba} output in
+    \vref{fig:proba}.
+
+
+    While most of our outputs are near the edge, we see that this is only
+    happening towards 1.
+    This could mean that our new samples are a skewed view of the population
+    or that the population itself is skewed toward 1 (becoming unemployed
+    during the 12 moth period after the sample is collected).
+    So lets compare with the histogram for the samples for which we do know
+    the outcome (\vref{fig:proba-targets}) and the true outcomes
+    (\vref{fig:proba-true}).
+
+    \begin{figure}[!ht]
+        \caption{Outcome and \emph{proba} histograms.}
+        \begin{subfigure}[ht]{.5\linewidth}
+            \subcaption{New samples \emph{proba}.}
+            \label{fig:proba}
+            \centering
+            \includegraphics[width=\textwidth]{./img/proba.png}
+        \end{subfigure}
+        %
+        \begin{subfigure}[ht]{.5\linewidth}
+            \subcaption{New samples with outcomes \emph{proba}.}
+            \label{fig:proba-targets}
+            \centering
+            \includegraphics[width=\textwidth]{./img/proba-targets.png}
+        \end{subfigure}
+
+        \vspace{5mm}
+
+        \begin{subfigure}[!ht]{.5\linewidth}
+            \subcaption{New outcomes.}
+            \label{fig:proba-true}
+            \centering
+            \includegraphics[width=\textwidth]{./img/proba-true.png}
+        \end{subfigure}
+        %
+        \begin{subfigure}[!ht]{.5\linewidth}
+            \subcaption{Original outcomes.}
+            \centering
+            \includegraphics[width=\textwidth]{./img/orig-true.png}
+        \end{subfigure}
+    \end{figure}
+
+    We can see that we are not in an ideal situation, our population outcomes
+    are skewed, we have to be extra careful.
+    But the AUC ROC score and the RUC curve (\vref{fig:roc}) tells us that we
+    should have a good predictive capability by carefully selecting a
+    threshold.
+
+    \begin{figure}[!ht]
+        \caption{ROC curve.}
+        \label{fig:roc}
+        \centering
+        \includegraphics[width=\textwidth]{./img/roc.png}
+    \end{figure}
+
+    \section{Retraining}
+    \label{sec:retrain}
+
+    We joined the new data (with outcomes) with the old and split into
+    training and test sets.
+    Afterward we trained the same model (GradientBoostingClassifier) with the
+    new data to compare the score with our deployed estimator, see
+    \vref{tab:scores}.
+    \begin{table}[!h]
+        \caption{Country of origin top 10.}
+        \label{tab:scores}
+
+        \centering
+        \subcaption{Original dataset.}
+        \begin{tabular}{cc}
+            Deployed estimator & 0.9182 \\
+            New estimator & 0.9232 \\
+        \end{tabular}
+    \end{table}
+
+    As we can see there is not a big difference, but there is so little new
+    data that this just means that no new "insights" came from the new data.
+
+    \appendix
+    \input{./tex/tables}
 
 %\bibliographystyle{IEEEtran}
 %\bibliography{}
