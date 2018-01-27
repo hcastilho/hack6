@@ -73,18 +73,11 @@ clean-test: ## remove test and coverage artifacts
 lint: ## check style with flake8
 	flake8 src tests
 
-test: ## run tests quickly with the default Python
-	python setup.py test
+test:
 	py.test tests/
-
-run-local-db:
-	docker-compose -f compose/local/docker-compose.yml up
 
 run-local:
 	python ./manage.py runserver --pythonpath etc/hack6 --settings settings_local
-
-run-travis: ## TODO
-	true
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source src setup.py test

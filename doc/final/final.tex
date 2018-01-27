@@ -10,12 +10,11 @@
         outcomes.
 
         The received data had significant differences from the data used in
-        training, but the models was still able to produce a reasonable
-        estimation of the outcomes.
-        The AUC ROC score for the new outcomes was \(0.8752\).
+        training, but the model was still able to produce a reasonable
+        estimation of the outcomes, the AUC ROC score was \(0.8752\).
 
         Using the new data and outcomes to retrain the data does not result
-        in  very impressive improvement, but should progressively increase
+        in  a large improvement, but should progressively increase
         as more outcomes arrive.
     \end{abstract}
 
@@ -134,11 +133,10 @@
     new data to compare the score with our deployed estimator, see
     \vref{tab:scores}.
     \begin{table}[!h]
-        \caption{Country of origin top 10.}
+        \caption{Estimator AUC ROC scores.}
         \label{tab:scores}
 
         \centering
-        \subcaption{Original dataset.}
         \begin{tabular}{cc}
             Deployed estimator & 0.9182 \\
             New estimator & 0.9232 \\
@@ -148,6 +146,7 @@
     As we can see there is not a big difference, but there is so little new
     data that this just means that no new "insights" came from the new data.
 
+    \clearpage
     \appendix
     \input{./tex/tables}
 
